@@ -1,7 +1,7 @@
 """
 This script is used to generate the data augmentation for the book recommendation system using the LLM model.
 """
-
+# import libraries
 import pandas as pd
 from langchain_community.chat_models import ChatCohere
 from langchain_core.messages import HumanMessage
@@ -71,7 +71,7 @@ def llm_data_augmentation(n_users, n_books, users_history, users_candidates, API
     LLM = ChatCohere(cohere_api_key=API_KEY, model="chat", max_tokens=256, temperature=0.5,
                      connectors=[{"id": "web-search"}])
     # initial context
-    initial_context = ("You are now a books recommender systems. Givent user history of read books and  a list of "
+    initial_context = ("You are now a books recommender systems. Given user history of read books and  a list of "
                        "candidates The recommendation system needs to predict which books the user will like and which "
                        "books will dislike from the provided candidates based on the history and analysis.")
 
