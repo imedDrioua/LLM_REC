@@ -1,18 +1,18 @@
 """
 This script is used to generate the data augmentation for the book recommendation system using the LLM model.
 """
-from secrets import API_KEY
+
 import pandas as pd
 from langchain_community.chat_models import ChatCohere
 from langchain_core.messages import HumanMessage
-from secret import API_KEY
+import json
 from src.data_augmentation.user_profile import llm_user_profile
 from src.data_augmentation.user_item_interactions import llm_user_item_interaction
 from src.data_augmentation.item_attributes import llm_book_profile
-import json
+import secret
 
 
-def llm_data_augmentation(n_users, n_books, users_history, users_candidates):
+def llm_data_augmentation(n_users, n_books, users_history, users_candidates, API_KEY):
     """
     Function that generates the data augmentation for the book recommendation system using the LLM model.
 
@@ -43,7 +43,7 @@ def llm_data_augmentation(n_users, n_books, users_history, users_candidates):
 
     # 2. User profile data augmentation
     # define the llm model
-    LLM = ChatCohere(cohere_api_key=API_KEY, model="chat", max_tokens=256, temperature=0.75, # the temperature is set
+    LLM = ChatCohere(cohere_api_key=API_KEY, model="chat", max_tokens=256, temperature=0.75,  # the temperature is set
                      # to 0.75, because we need more diversity in the output
                      connectors=[{"id": "web-search"}])
     # initial context
@@ -93,9 +93,9 @@ if __name__ == "__main__":
     # load users candidates
     with open("data/books/users_candidates.json", "r") as f:
         users_candidates = json.load(f)
-
+    API_KEY = secret.API_KEY
     # load data
     n_books = len(books)
     n_users = len(users)
     # data augmentation
-    llm_data_augmentation(n_users, n_books, users_history, users_candidates)
+    llm_data_augmentation(n_users, n_books, users_history, users_candidates, API_KEY)
