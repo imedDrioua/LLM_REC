@@ -17,9 +17,16 @@ def llm_data_augmentation(n_users, n_books, users_history, users_candidates, API
     Function that generates the data augmentation for the book recommendation system using the LLM model.
 
     :param n_users: number of users
+    :type n_users: int
     :param n_books: number of items
+    :type n_books: int
     :param users_history: list of users interaction history
+    :type users_history: dict
     :param users_candidates: list of items candidates
+    :type users_candidates: dict
+    :param API_KEY: API key
+    :type API_KEY: str
+    :return: None
     """
     # 1. Item attributes data augmentation
     # define the llm model
@@ -94,7 +101,7 @@ if __name__ == "__main__":
     with open("data/books/users_candidates.json", "r") as f:
         users_candidates = json.load(f)
     API_KEY = secret.API_KEY
-    # load data
+    # data dimensions
     n_books = len(books)
     n_users = len(users)
     # data augmentation
