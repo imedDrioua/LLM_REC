@@ -12,21 +12,25 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class MmModel(nn.Module):
-    def __init__(self, n_users, n_items, embed_size, train_data, n_layers, *args, **kwargs):
+    def __init__(self, n_users, n_items, embed_size, adjacency_matrix, n_layers, train_df=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.n_users = n_users
         self.n_items = n_items
         self.embed_size = embed_size
-        self.train_data = train_data
+        self.user_item_matrix = adjacency_matrix
         self.n_layers = n_layers
+        if self.user_item_matrix is None:
+            self.create_adjacency_matrix(train_df)
+        # optimizer
         # user and item embedding layers
         self.E0 = nn.Embedding(self.n_users + self.n_items, self.embed_size)
         # weight initialization with xavier uniform
         init.xavier_uniform_(self.E0.weight)
         # Set model Parameter
+
         self.model_parameters = nn.Parameter(self.E0.weight)
 
-    def forward(self, user_indices, pos_item_indices, neg_item_indices):
+    def propagate(self):
         # get the embeddings of the users and items
         all_embeddings = [self.E0.weight]
         e_layer_weight = self.E0.weight
@@ -42,7 +46,10 @@ class MmModel(nn.Module):
 
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
+        return user_embeddings, item_embeddings
 
+    def forward(self, user_indices, pos_item_indices, neg_item_indices):
+        user_embeddings, item_embeddings = self.propagate()
         # get the embeddings of the users and items
         user_embeddings = user_embeddings[user_indices]
         pos_item_embeddings = item_embeddings[pos_item_indices]
@@ -50,15 +57,10 @@ class MmModel(nn.Module):
 
         return user_embeddings, pos_item_embeddings, neg_item_embeddings
 
-    def convert_dict_to_dok(self):
-        dok = dok_matrix((self.n_users, self.n_items), dtype=np.float16)
-        for user_id, items in self.train_data.items():
-            for item_id in items:
-                dok[int(user_id), int(item_id)] = 1.0
-        return dok
-
-    def create_adjacency_matrix(self):
-        R = self.convert_dict_to_dok()
+    def create_adjacency_matrix(self, train_df):
+        # check if the user_item_matrix is already created
+        R = sp.dok_matrix((self.n_users, self.n_items), dtype=np.float32)
+        R[train_df['user_id'], train_df['item_id']] = 1.0
         adj_mat = sp.dok_matrix(
             (self.n_users + self.n_items, self.n_users + self.n_items), dtype=np.float32
         )
@@ -80,11 +82,10 @@ class MmModel(nn.Module):
         norm_adj_mat_coo = norm_adj_mat.tocoo().astype(np.float32)
         values = norm_adj_mat_coo.data
         indices = np.vstack((norm_adj_mat_coo.row, norm_adj_mat_coo.col))
-
         i = torch.LongTensor(indices)
         v = torch.FloatTensor(values)
         shape = norm_adj_mat_coo.shape
 
         norm_adj_mat_sparse_tensor = torch.sparse_coo_tensor(i, v, torch.Size(shape))
 
-        return norm_adj_mat_sparse_tensor
+        self.user_item_matrix = norm_adj_mat_sparse_tensor
