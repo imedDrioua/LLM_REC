@@ -19,6 +19,7 @@ class BooksDataset:
         self.adjacency_matrix = None
         if os.path.exists(f'{data_dir}/adjacency_matrix.pt'):
             self.adjacency_matrix = torch.load(f'{data_dir}/adjacency_matrix.pt')
+
         self.batch_size = batch_size
 
         with open(f'{data_dir}/train.json', 'r') as f:

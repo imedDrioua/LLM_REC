@@ -24,11 +24,13 @@ class MmModel(nn.Module):
         # optimizer
         # user and item embedding layers
         self.E0 = nn.Embedding(self.n_users + self.n_items, self.embed_size)
+
         # weight initialization with xavier uniform
         init.xavier_uniform_(self.E0.weight)
         # Set model Parameter
-
         self.model_parameters = nn.Parameter(self.E0.weight)
+        # map adjacency matrix to device (GPU if available)
+        self.user_item_matrix = self.user_item_matrix.to(device)
 
     def propagate(self):
         # get the embeddings of the users and items

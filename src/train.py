@@ -25,6 +25,7 @@ class Trainer:
                 users, pos_items, neg_items = self.dataset.sample(batch_size)
                 self.optimizer.zero_grad()
                 user_embeddings, pos_item_embeddings, neg_item_embeddings = self.model(users, pos_items, neg_items)
+
                 mf_loss, emb_loss, reg_loss = bpr_loss(user_embeddings, pos_item_embeddings, neg_item_embeddings,
                                                        self.dataset.batch_size)
                 total_loss = mf_loss + emb_loss + reg_loss
