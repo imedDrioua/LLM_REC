@@ -31,6 +31,11 @@ class MmModel(nn.Module):
         self.model_parameters = nn.Parameter(self.E0.weight)
 
     def propagate(self):
+        """ Propagate the embeddings of the users and items through the layers of the model
+        and get the mean of the embeddings of the users and items
+
+        Returns:  user_embeddings, item_embeddings
+        """
         # get the embeddings of the users and items
         all_embeddings = [self.E0.weight]
         e_layer_weight = self.E0.weight
@@ -58,6 +63,10 @@ class MmModel(nn.Module):
         return user_embeddings, pos_item_embeddings, neg_item_embeddings
 
     def create_adjacency_matrix(self, train_df):
+        """ Create the adjacency matrix of the users and items
+         Args:
+            train_df (pd.DataFrame): The training dataframe containing the user_id and item_id columns
+            """
         # check if the user_item_matrix is already created
         R = sp.dok_matrix((self.n_users, self.n_items), dtype=np.float32)
         R[train_df['user_id'], train_df['item_id']] = 1.0

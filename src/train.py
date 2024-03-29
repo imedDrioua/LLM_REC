@@ -15,6 +15,10 @@ class Trainer:
         self.tester = Tester(self.dataset)
 
     def train(self, epochs, batch_size=1024):
+        """ Train the model for a number of epochs
+        :param epochs: int, number of epochs
+        :param batch_size: int, batch size
+        """
         n_batch = self.dataset.n_users // batch_size + 1
 
         for epoch in range(epochs):
@@ -38,6 +42,10 @@ class Trainer:
             print(f'Epoch {epoch} Loss {loss / n_batch} Time {time() - start}')
 
     def evaluate(self, test_users):
+        """ Evaluate the model on a test set
+        :param test_users: dict, test users
+        :return: dict, evaluation results
+        """
         self.model.eval()
         with torch.no_grad():
             user_embeddings, item_embeddings = self.model.propagate()

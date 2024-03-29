@@ -18,6 +18,9 @@ class Tester:
         self.rating = None
 
     def rank_list_by_heapq(self):
+        """ Get the top K items for one user using heapq
+         :return: r: list, auc: float
+         """
         item_score = {}
         for i in self.test_items:
             item_score[i] = self.rating[i]
@@ -35,6 +38,10 @@ class Tester:
         return r, auc
 
     def get_auc(self, item_score):
+        """ Get the auc score for one user
+        :param item_score: dict, item score for one user
+        :return: auc: float
+        """
         item_score = sorted(item_score.items(), key=lambda kv: kv[1])
         item_score.reverse()
         item_sort = [x[0] for x in item_score]
@@ -50,6 +57,9 @@ class Tester:
         return auc
 
     def rank_list_by_sorted(self):
+        """ Get the top K items for one user using sorted
+        :return: r: list, auc: float
+        """
         item_score = {}
         for i in self.test_items:
             item_score[i] = self.rating[i]
@@ -67,6 +77,11 @@ class Tester:
         return r, auc
 
     def get_performance(self, r, auc):
+        """ Get the performance for one user
+        :param r: list, ranking list
+        :param auc: float, auc score
+        :return: performance: dict, performance for one user
+        """
         precision, recall, ndcg, hit_ratio = [], [], [], []
 
         for K in self.Ks:
@@ -79,6 +94,11 @@ class Tester:
                 'ndcg': np.array(ndcg), 'hit_ratio': np.array(hit_ratio), 'auc': auc}
 
     def test_one_user(self, x, test_flag='part'):
+        """ Test one user
+        :param x: tuple, (rating, uid, is_val)
+        :param test_flag: str, test flag
+        :return: performance: dict, performance for one user
+        """
         # user u's ratings for user u
         is_val = x[-1]
         rating = x[0]
@@ -109,6 +129,15 @@ class Tester:
         return self.get_performance(r, auc)
 
     def test(self, ua_embeddings, ia_embeddings, users_to_test, batch_size, is_val, batch_test_flag=False):
+        """ Test the performance of the model
+        :param ua_embeddings: np.ndarray, user embeddings
+        :param ia_embeddings: np.ndarray, item embeddings
+        :param users_to_test: list, users to test
+        :param batch_size: int, batch size
+        :param is_val: bool, if val
+        :param batch_test_flag: bool, if batch test
+        :return: result: dict, performance of the model
+        """
         Ks = self.Ks
         result = {'precision': np.zeros(len(Ks)), 'recall': np.zeros(len(Ks)), 'ndcg': np.zeros(len(Ks)),
                   'hit_ratio': np.zeros(len(Ks)), 'auc': 0.}

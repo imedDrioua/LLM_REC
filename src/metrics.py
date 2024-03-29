@@ -60,27 +60,36 @@ def dcg_at_k(r, k, method=1):
 
 
 def ndcg_at_k(r, k, method=1):
-    """Score is normalized discounted cumulative gain (ndcg)
-    Relevance is positive real values.  Can use binary
-    as the previous methods.
-    Returns:
-        Normalized discounted cumulative gain
+   """Score is normalized discounted cumulative gain (ndcg)
+   Relevance is positive real values.  Can use binary
+   as the previous methods.
+   Returns:
+       Normalized discounted cumulative gain
     """
-    dcg_max = dcg_at_k(sorted(r, reverse=True), k, method)
-    if not dcg_max:
+   dcg_max = dcg_at_k(sorted(r, reverse=True), k, method)
+   if not dcg_max:
         return 0.
-    return dcg_at_k(r, k, method) / dcg_max
+   return dcg_at_k(r, k, method) / dcg_max
 
 
 def recall_at_k(r, k, all_pos_num):
-    r = np.asfarray(r)[:k]
-    if all_pos_num == 0:
+  """Score is recall @ k
+  Relevance is binary (nonzero is relevant).
+  Returns:
+      Recall @ k
+   """
+  r = np.asfarray(r)[:k]
+  if all_pos_num == 0:
         return 0
-    else:
+  else:
         return np.sum(r) / all_pos_num
 
 
 def hit_at_k(r, k):
+    """Score is hit rate @ k
+    Relevance is binary (nonzero is relevant).
+    Returns:
+        Hit rate @ k"""
     r = np.array(r)[:k]
     if np.sum(r) > 0:
         return 1.
@@ -89,6 +98,9 @@ def hit_at_k(r, k):
 
 
 def F1(pre, rec):
+    """Score is F1
+    Returns:
+        F1"""
     if pre + rec > 0:
         return (2.0 * pre * rec) / (pre + rec)
     else:
@@ -96,6 +108,9 @@ def F1(pre, rec):
 
 
 def auc(ground_truth, prediction):
+    """Score is AUC
+    Returns:
+        AUC"""
     try:
         res = roc_auc_score(y_true=ground_truth, y_score=prediction)
     except Exception:
