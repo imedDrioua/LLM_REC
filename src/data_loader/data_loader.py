@@ -1,18 +1,25 @@
 # import the necessary libraries
 import pandas as pd
 import numpy as np
+import os
+import torch
 import json
 
 
 class BooksDataset:
 
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, batch_size=1024):
         self.data_dir = data_dir
-        self.train_matrix = pd.read_pickle(f'{data_dir}/train_matrix.pkl')
+        self.train_matrix = pd.read_csv(f'{data_dir}/train_df.csv').values
         self.images = np.load(f'{data_dir}/embed_image.npy')
         self.text = np.load(f'{data_dir}/embed_text.npy')
         self.user_profiles = np.load(f'{data_dir}/users_profiles_embeddings.npy')
         self.books_attributes = np.load(f'{data_dir}/books_attributes_embeddings.npy')
+        # check if the adjacency matrix exists, if not, create it
+        self.adjacency_matrix = None
+        if os.path.exists(f'{data_dir}/adjacency_matrix.pt'):
+            self.adjacency_matrix = torch.load(f'{data_dir}/adjacency_matrix.pt')
+        self.batch_size = batch_size
 
         with open(f'{data_dir}/train.json', 'r') as f:
             self.train_dict = json.load(f)
@@ -23,15 +30,17 @@ class BooksDataset:
 
         # create a dict to map each dataset name to its corresponding data
         self.datasets = {
-            'train': self.train_matrix,
+            'train_matrix': self.train_matrix,
             'images': self.images,
             'text': self.text,
             'user_profiles': self.user_profiles,
             'books_attributes': self.books_attributes,
             'train_dict': self.train_dict,
             'test_dict': self.test_dict,
-            'val_dict': self.val_dict
+            'val_dict': self.val_dict,
+            'adjacency_matrix': self.adjacency_matrix
         }
+        self.n_users, self.n_items = len(self.train_dict), len(self.books_attributes)
 
     # return the length of all the datasets as dictionary
     def __len__(self):
@@ -69,15 +78,18 @@ class BooksDataset:
         users = []
         pos_books = []
         neg_books = []
-        for i in range(n_users):
-            user = self.train_dict[str(i)]
-            pos_book = np.random.choice(self.train_dict[user])
-            while True:
-                neg_book = np.random.choice(self.train_dict.values())
-                if neg_book not in self.train_dict[user]:
-                    break
+       
+        # sample n_users, one positive and one negative book for each user
+        for _ in range(n_users):
+            user = np.random.randint(low=0, high=self.n_users, size=1)[0]
             users.append(user)
+            # sample a positive book
+            pos_book = np.random.choice(self.train_dict[str(user)])
             pos_books.append(pos_book)
+            # sample a negative book
+            neg_book = np.random.randint(self.n_items)
+            while neg_book in self.train_dict[str(user)]:
+                neg_book = np.random.randint(self.n_items)
             neg_books.append(neg_book)
 
         return users, pos_books, neg_books

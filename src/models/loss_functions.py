@@ -5,11 +5,11 @@ import numpy as np
 import torch.nn.functional as f
 from ..parser import parse_args
 
-args = parse_args()
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def bpr_loss(users, pos_items, neg_items, batch_size):
+def bpr_loss(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71, decay=1e-5):
     pos_scores = torch.sum(torch.mul(users, pos_items), dim=1)
     neg_scores = torch.sum(torch.mul(users, neg_items), dim=1)
 
@@ -18,9 +18,9 @@ def bpr_loss(users, pos_items, neg_items, batch_size):
     regularized = regularized / batch_size
 
     maxi = f.logsigmoid(pos_scores - neg_scores + 1e-8)
-    mf_loss = - prune_loss(maxi, args.prune_loss_drop_rate)
+    mf_loss = - prune_loss(maxi, prune_loss_drop_rate)
 
-    emb_loss = args.decay * regularized
+    emb_loss = decay * regularized
     reg_loss = 0.0
     return mf_loss, emb_loss, reg_loss
 
