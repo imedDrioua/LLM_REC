@@ -1,10 +1,9 @@
 # this script defines the training process of the model
-
 from time import time
 import torch
 from tqdm import tqdm
-from src.models.loss_functions import bpr_loss
-from src.test import Tester
+from models.loss_functions import bpr_loss
+from test import Tester
 
 
 class Trainer:

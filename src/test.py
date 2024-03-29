@@ -1,4 +1,4 @@
-import src.metrics as metrics
+from src import metrics as metrics
 import multiprocessing
 import heapq
 import torch

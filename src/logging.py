@@ -1,17 +1,28 @@
 # The logger class
-
-
 import os
 from datetime import datetime
 
 
 class Logger:
     def __init__(self, filename, is_debug, path='./logs/'):
+        """
+        init logger
+
+        :param filename:
+        :param is_debug:
+        :param path:
+        """
         self.filename = filename
         self.path = path
         self.log_ = not is_debug
 
     def logging(self, s):
+        """
+        log the message
+
+        :param s:
+        :return:
+        """
         s = str(s)
         print(datetime.now().strftime('%Y-%m-%d %H:%M: '), s)
         if self.log_:

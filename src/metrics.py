@@ -9,6 +9,7 @@ def recall(rank, ground_truth, N):
 def precision_at_k(r, k):
     """
     calculate precision at k
+
     :param r:  list of relevance scores (either 1 or 0)
     :param k:  number of results to consider
     :return:  precision at k
@@ -22,6 +23,7 @@ def precision_at_k(r, k):
 def average_precision(r, cut):
     """
     calculate average precision
+
     :param r:  list of relevance scores (either 1 or 0)
     :param cut:  number of results to consider
     :return:  average precision
@@ -37,6 +39,7 @@ def average_precision(r, cut):
 def mean_average_precision(rs):
     """
     calculate mean average precision
+
     :param rs:  list of relevance scores (either 1 or 0)
     :return:    mean average precision
     :rtype: float
@@ -47,6 +50,7 @@ def mean_average_precision(rs):
 def dcg_at_k(r, k, method=1):
     """
     calculate discounted cumulative gain at k
+
     :param r:  list of relevance scores (either 1 or 0)
     :param k:  number of results to consider
     :param method:   method to calculate dcg
@@ -66,7 +70,8 @@ def dcg_at_k(r, k, method=1):
 
 def ndcg_at_k(r, k, method=1):
    """
-    calculate normalized discounted cumulative gain at k
+   calculate normalized discounted cumulative gain at k
+
    :param r:  list of relevance scores (either 1 or 0)
    :param k:  number of results to consider
    :param method:  method to calculate dcg
@@ -81,7 +86,8 @@ def ndcg_at_k(r, k, method=1):
 
 def recall_at_k(r, k, all_pos_num):
   """
-    calculate recall at k
+  calculate recall at k
+
   :param r:  list of relevance scores (either 1 or 0)
   :param k:  number of results to consider
   :param all_pos_num:  number of all positive samples
@@ -98,6 +104,7 @@ def recall_at_k(r, k, all_pos_num):
 def hit_at_k(r, k):
     """
     calculate hit at k
+
     :param r:  list of relevance scores (either 1 or 0)
     :param k:  number of results to consider
     :return:  hit at k
@@ -113,6 +120,7 @@ def hit_at_k(r, k):
 def F1(pre, rec):
     """
     calculate F1 score
+
     :param pre:  precision
     :param rec:  recall
     :return:  F1 score
@@ -127,6 +135,7 @@ def F1(pre, rec):
 def auc(ground_truth, prediction):
     """
     calculate AUC score
+
     :param ground_truth:  ground truth
     :param prediction:  prediction
     :return:  AUC score
