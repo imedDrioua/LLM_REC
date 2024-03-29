@@ -2,8 +2,8 @@
 from time import time
 import torch
 from tqdm import tqdm
-from models.loss_functions import bpr_loss
-from test import Tester
+from src.models.loss_functions import bpr_loss
+from src.test import Tester
 
 
 class Trainer:

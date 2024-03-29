@@ -1,4 +1,8 @@
+import os
 import sys
+
+sys.path.append(os.path.abspath('../../src'))
+sys.path.append(os.path.abspath('../..'))
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -6,11 +10,10 @@ import sys
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-sys.path.insert(0, '../../src/metrics.py')
-sys.path.insert(0, '../../src/train.py')
+
 project = 'ppd'
-copyright = '2024, lamis imed'
-author = 'lamis imed'
+copyright = '2024, Drioua Imed, Lamis Boufafa'
+author = 'Drioua Imed, Lamis Boufafa'
 release = '0.0'
 
 # -- General configuration ---------------------------------------------------

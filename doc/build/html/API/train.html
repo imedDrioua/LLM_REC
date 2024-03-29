@@ -22,7 +22,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Recherche" href="../search.html" />
-    <link rel="prev" title="test module" href="test.html" /> 
+    <link rel="next" title="test module" href="test.html" />
+    <link rel="prev" title="metrics module" href="metrics.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,8 +49,15 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="metrics.html">metrics module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">train module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#train.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#train.Trainer.evaluate"><code class="docutils literal notranslate"><span class="pre">Trainer.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#train.Trainer.train"><code class="docutils literal notranslate"><span class="pre">Trainer.train()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="test.html">test module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">train module</a></li>
 </ul>
 </li>
 </ul>
@@ -79,21 +87,47 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="train-module">
-<h1>train module<a class="headerlink" href="#train-module" title="Link to this heading"></a></h1>
+  <section id="module-train">
+<span id="train-module"></span><h1>train module<a class="headerlink" href="#module-train" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="train.Trainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer" title="Link to this definition"></a></dt>
+<dd><p>Bases : <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="train.Trainer.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_users</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the model on the test set
+:param test_users:  dict, test users
+:return:  evaluation results
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="train.Trainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer.train" title="Link to this definition"></a></dt>
+<dd><p>Train the model
+:param epochs:  number of epochs
+:param batch_size:  batch size
+:return:  None
+:rtype: None</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
-        <a href="test.html" class="btn btn-neutral float-left" title="test module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="metrics.html" class="btn btn-neutral float-left" title="metrics module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="test.html" class="btn btn-neutral float-right" title="test module" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Droits d'auteur 2024, lamis imed.</p>
+    <p>&#169; Droits d'auteur 2024, Drioua Imed, Lamis Boufafa.</p>
   </div>
 
   Compilé avec <a href="https://www.sphinx-doc.org/">Sphinx</a> en utilisant un

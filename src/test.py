@@ -20,6 +20,7 @@ class Tester:
     def rank_list_by_heapq(self):
         """
         Get the top K items for one user using heapq
+
         :return:  r: list, auc: float
         :rtype: list, float
         """
@@ -42,6 +43,7 @@ class Tester:
     def get_auc(self, item_score):
         """
         Get the auc score
+
         :param item_score:  dict, item score
         :return:  auc: float
         :rtype: float
@@ -63,6 +65,7 @@ class Tester:
     def rank_list_by_sorted(self):
         """
         Get the top K items for one user using sorted
+
         :return:  r: list, auc: float
         :rtype: list, float
         """
@@ -85,6 +88,7 @@ class Tester:
     def get_performance(self, r, auc):
         """
         Get the performance of the model
+
         :param r:  list, auc: float
         :param auc:  float
         :return:  performance: dict
@@ -104,6 +108,7 @@ class Tester:
     def test_one_user(self, x, test_flag='part'):
         """
         Test the performance of the model for one user
+
         :param x:  list, user u's ratings for user u
         :param test_flag:  str, test flag
         :return:  performance: dict
@@ -141,6 +146,7 @@ class Tester:
     def test(self, ua_embeddings, ia_embeddings, users_to_test, batch_size, is_val, batch_test_flag=False):
         """
         Test the performance of the model
+
         :param ua_embeddings:  torch.Tensor, user embeddings
         :param ia_embeddings:  torch.Tensor, item embeddings
         :param users_to_test:  list, users to test

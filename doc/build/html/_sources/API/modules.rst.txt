@@ -6,5 +6,5 @@ src
 
 
    metrics
-   test
    train
+   test
