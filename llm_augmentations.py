@@ -3,8 +3,7 @@ This script is used to generate the data augmentation for the book recommendatio
 """
 # import libraries
 import pandas as pd
-from langchain_community.chat_models import ChatCohere
-from langchain_core.messages import HumanMessage
+from langchain_community.chat_models import ChatCohere, HumanMessage
 import json
 from src.data_augmentation.user_profile import llm_user_profile
 from src.data_augmentation.user_item_interactions import llm_user_item_interaction
@@ -27,6 +26,7 @@ def llm_data_augmentation(n_users, n_books, users_history, users_candidates, api
     :param api_key: API key
     :type api_key: str
     :return: None
+    :rtype: None
     """
     # 1. Item attributes data augmentation
     # define the llm model

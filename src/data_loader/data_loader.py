@@ -96,8 +96,9 @@ class BooksDataset:
 
     def describe(self):
         """
-        Return the shape of all the datasets, number of interractions and the sparsity of the train matrix
-
+        Print the shape of all the datasets, the number of interactions in the train matrix, and the sparsity of the train matrix
+        :return:  None
+        :rtype: None
         """
         # get the shape of all the datasets (dictionaries need special handling)
         shape = {k: v.shape if isinstance(v, np.ndarray) else len(v) for k, v in self.datasets.items()}

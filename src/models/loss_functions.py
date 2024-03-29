@@ -10,16 +10,17 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def bpr_loss(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71, decay=1e-5):
-    """ Bayesian Personalized Ranking loss function
-     Args:
-        users: user embeddings
-        pos_items: positive item embeddings
-        neg_items: negative item embeddings
-        batch_size: batch size
-        prune_loss_drop_rate: drop rate for pruning the loss
-        decay: regularization parameter
-        Returns:   mf_loss, emb_loss, reg_loss
-         """
+    """
+    Bayesian Personalized Ranking (BPR) loss function
+    :param users:  user embeddings
+    :param pos_items:  positive item embeddings
+    :param neg_items:  negative item embeddings
+    :param batch_size:      batch size
+    :param prune_loss_drop_rate:  drop rate for pruning
+    :param decay:  decay rate
+    :return:  mf_loss, emb_loss, reg_loss
+    :rtype: float, float, float
+    """
     pos_scores = torch.sum(torch.mul(users, pos_items), dim=1)
     neg_scores = torch.sum(torch.mul(users, neg_items), dim=1)
 
@@ -36,12 +37,13 @@ def bpr_loss(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71,
 
 
 def prune_loss(prediction, drop_rate):
-    """ Prune the loss by removing the lowest prediction values
-    Args:
-        prediction: the prediction values
-        drop_rate: the drop rate for pruning
-        Returns: the pruned loss
-        """
+    """
+    Prune the loss
+    :param prediction:  prediction
+    :param drop_rate:    drop rate
+    :return:  loss_update
+    :rtype: float
+    """
     if device == torch.device("cuda"):
         ind_sorted = np.argsort(prediction.cpu().data).cuda()
     else:

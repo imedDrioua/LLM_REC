@@ -7,12 +7,12 @@ def recall(rank, ground_truth, N):
 
 
 def precision_at_k(r, k):
-    """Score is precision @ k
-    Relevance is binary (nonzero is relevant).
-    Returns:
-        Precision @ k
-    Raises:
-        ValueError: len(r) must be >= k
+    """
+    calculate precision at k
+    :param r:  list of relevance scores (either 1 or 0)
+    :param k:  number of results to consider
+    :return:  precision at k
+    :rtype: float
     """
     assert k >= 1
     r = np.asarray(r)[:k]
@@ -20,10 +20,12 @@ def precision_at_k(r, k):
 
 
 def average_precision(r, cut):
-    """Score is average precision (area under PR curve)
-    Relevance is binary (nonzero is relevant).
-    Returns:
-        Average precision
+    """
+    calculate average precision
+    :param r:  list of relevance scores (either 1 or 0)
+    :param cut:  number of results to consider
+    :return:  average precision
+    :rtype: float
     """
     r = np.asarray(r)
     out = [precision_at_k(r, k + 1) for k in range(cut) if r[k]]
@@ -33,20 +35,23 @@ def average_precision(r, cut):
 
 
 def mean_average_precision(rs):
-    """Score is mean average precision
-    Relevance is binary (nonzero is relevant).
-    Returns:
-        Mean average precision
+    """
+    calculate mean average precision
+    :param rs:  list of relevance scores (either 1 or 0)
+    :return:    mean average precision
+    :rtype: float
     """
     return np.mean([average_precision(r) for r in rs])
 
 
 def dcg_at_k(r, k, method=1):
-    """Score is discounted cumulative gain (dcg)
-    Relevance is positive real values.  Can use binary
-    as the previous methods.
-    Returns:
-        Discounted cumulative gain
+    """
+    calculate discounted cumulative gain at k
+    :param r:  list of relevance scores (either 1 or 0)
+    :param k:  number of results to consider
+    :param method:   method to calculate dcg
+    :return:  discounted cumulative gain at k
+    :rtype: float
     """
     r = np.asfarray(r)[:k]
     if r.size:
@@ -60,12 +65,14 @@ def dcg_at_k(r, k, method=1):
 
 
 def ndcg_at_k(r, k, method=1):
-   """Score is normalized discounted cumulative gain (ndcg)
-   Relevance is positive real values.  Can use binary
-   as the previous methods.
-   Returns:
-       Normalized discounted cumulative gain
-    """
+   """
+    calculate normalized discounted cumulative gain at k
+   :param r:  list of relevance scores (either 1 or 0)
+   :param k:  number of results to consider
+   :param method:  method to calculate dcg
+   :return:  normalized discounted cumulative gain at k
+   :rtype: float
+   """
    dcg_max = dcg_at_k(sorted(r, reverse=True), k, method)
    if not dcg_max:
         return 0.
@@ -73,11 +80,14 @@ def ndcg_at_k(r, k, method=1):
 
 
 def recall_at_k(r, k, all_pos_num):
-  """Score is recall @ k
-  Relevance is binary (nonzero is relevant).
-  Returns:
-      Recall @ k
-   """
+  """
+    calculate recall at k
+  :param r:  list of relevance scores (either 1 or 0)
+  :param k:  number of results to consider
+  :param all_pos_num:  number of all positive samples
+  :return:  recall at k
+  :rtype: float
+  """
   r = np.asfarray(r)[:k]
   if all_pos_num == 0:
         return 0
@@ -86,10 +96,13 @@ def recall_at_k(r, k, all_pos_num):
 
 
 def hit_at_k(r, k):
-    """Score is hit rate @ k
-    Relevance is binary (nonzero is relevant).
-    Returns:
-        Hit rate @ k"""
+    """
+    calculate hit at k
+    :param r:  list of relevance scores (either 1 or 0)
+    :param k:  number of results to consider
+    :return:  hit at k
+    :rtype: float
+    """
     r = np.array(r)[:k]
     if np.sum(r) > 0:
         return 1.
@@ -98,9 +111,13 @@ def hit_at_k(r, k):
 
 
 def F1(pre, rec):
-    """Score is F1
-    Returns:
-        F1"""
+    """
+    calculate F1 score
+    :param pre:  precision
+    :param rec:  recall
+    :return:  F1 score
+    :rtype: float
+    """
     if pre + rec > 0:
         return (2.0 * pre * rec) / (pre + rec)
     else:
@@ -108,9 +125,13 @@ def F1(pre, rec):
 
 
 def auc(ground_truth, prediction):
-    """Score is AUC
-    Returns:
-        AUC"""
+    """
+    calculate AUC score
+    :param ground_truth:  ground truth
+    :param prediction:  prediction
+    :return:  AUC score
+    :rtype: float
+    """
     try:
         res = roc_auc_score(y_true=ground_truth, y_score=prediction)
     except Exception:
