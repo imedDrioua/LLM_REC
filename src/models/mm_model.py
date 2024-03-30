@@ -1,4 +1,4 @@
-# the Mm_model class is the class that implement lightgcn model
+
 
 # import the necessary packages
 import torch
@@ -48,16 +48,21 @@ class MmModel(nn.Module):
 
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
-        return user_embeddings, item_embeddings
+        initial_user_Embed, initial_item_Embed = torch.split(self.E0.weight, [self.n_users, self.n_items], dim=0)
+        return user_embeddings, item_embeddings, initial_user_Embed, initial_item_Embed
 
     def forward(self, user_indices, pos_item_indices, neg_item_indices):
-        user_embeddings, item_embeddings = self.propagate()
+        user_embeddings, item_embeddings, initial_user_Embed, initial_item_Embed = self.propagate()
         # get the embeddings of the users and items
         user_embeddings = user_embeddings[user_indices]
         pos_item_embeddings = item_embeddings[pos_item_indices]
         neg_item_embeddings = item_embeddings[neg_item_indices]
 
-        return user_embeddings, pos_item_embeddings, neg_item_embeddings
+        userEmb0 = initial_user_Embed[user_indices]
+        posEmb0 = initial_item_Embed[pos_item_indices]
+        negEmb0 = initial_item_Embed[neg_item_indices]
+
+        return user_embeddings, pos_item_embeddings, neg_item_embeddings, userEmb0, posEmb0, negEmb0
 
     def create_adjacency_matrix(self, train_df):
         # check if the user_item_matrix is already created

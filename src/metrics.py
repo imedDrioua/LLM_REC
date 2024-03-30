@@ -101,3 +101,4 @@ def auc(ground_truth, prediction):
     except Exception:
         res = 0.
     return res
+
