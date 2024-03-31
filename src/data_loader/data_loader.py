@@ -10,11 +10,12 @@ class BooksDataset:
 
     def __init__(self, data_dir, batch_size=1024):
         self.data_dir = data_dir
-        self.train_matrix = pd.read_csv(f'{data_dir}/train_df.csv').values
+        #self.train_matrix = pd.read_csv(f'{data_dir}/train_df.csv').values
         self.images = np.load(f'{data_dir}/embed_image.npy')
         self.text = np.load(f'{data_dir}/embed_text.npy')
         self.user_profiles = np.load(f'{data_dir}/users_profiles_embeddings.npy')
         self.books_attributes = np.load(f'{data_dir}/books_attributes_embeddings.npy')
+        self.interactions = torch.load(f'{data_dir}/train_matrix.pt')
         # check if the adjacency matrix exists, if not, create it
         self.adjacency_matrix = None
         if os.path.exists(f'{data_dir}/adjacency_matrix.pt'):
@@ -31,7 +32,7 @@ class BooksDataset:
 
         # create a dict to map each dataset name to its corresponding data
         self.datasets = {
-            'train_matrix': self.train_matrix,
+            #'train_matrix': self.train_matrix,
             'images': self.images,
             'text': self.text,
             'user_profiles': self.user_profiles,
@@ -39,7 +40,8 @@ class BooksDataset:
             'train_dict': self.train_dict,
             'test_dict': self.test_dict,
             'val_dict': self.val_dict,
-            'adjacency_matrix': self.adjacency_matrix
+            'adjacency_matrix': self.adjacency_matrix,
+            'interactions': self.interactions
         }
         self.n_users, self.n_items = len(self.train_dict), len(self.books_attributes)
 

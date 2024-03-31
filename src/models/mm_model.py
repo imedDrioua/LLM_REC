@@ -11,23 +11,32 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class MmModel(nn.Module):
-    def __init__(self, n_users, n_items, embed_size, adjacency_matrix, n_layers, model_cat_rate=0.02, train_df=None,
+    def __init__(self, n_users, n_items, embed_size, adjacency_matrix, interactions, image_embeddings_data,
+                 text_embeddings_data,
+                 n_layers, model_cat_rate=0.02, train_df=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.user_image_embeddings = None
+        self.item_image_embeddings = None
+        self.user_text_embeddings = None
+        self.item_text_embeddings = None
         self.n_users = n_users
         self.n_items = n_items
         self.embed_size = embed_size
         self.user_item_matrix = adjacency_matrix
         self.n_layers = n_layers
         self.model_cat_rate = model_cat_rate
+
         if self.user_item_matrix is None:
             self.create_adjacency_matrix(train_df)
         # optimizer
         # user and item embedding layers
         self.E0 = nn.Embedding(self.n_users + self.n_items, self.embed_size)
-        self.text_feat = nn.Linear(self.n_users + self.n_items, self.embed_size)
-        self.image_feat = nn.Linear(self.n_users + self.n_items, self.embed_size)
-
+        # Side information layers
+        self.text_feat = nn.Linear(image_embeddings_data.shape[1], self.embed_size)
+        self.text_feat_dropout = nn.Dropout(0.2)
+        self.image_feat = nn.Linear(text_embeddings_data.shape[1], self.embed_size)
+        self.image_feat_dropout = nn.Dropout(0.2)
 
         # weight initialization with xavier uniform
         init.xavier_uniform_(self.E0.weight)
@@ -37,45 +46,46 @@ class MmModel(nn.Module):
         # Set model Parameter
         # self.model_parameters = nn.ParameterList([self.E0.weight, self.text_feat.weight, self.image_feat.weight])
 
-        # map adjacency matrix to device (GPU if available)
+        # map data to device (GPU if available)
         self.user_item_matrix = self.user_item_matrix.to(device)
+        self.image_embeddings_data = torch.tensor(image_embeddings_data, dtype=torch.float32).to(device)
+        self.text_embeddings_data = torch.tensor(text_embeddings_data, dtype=torch.float32).to(device)
+        self.user_item_interactions = interactions.to(device)
+        self.item_user_interactions = self.user_item_interactions.t().to(device)
+
 
     def propagate(self):
         # get the embeddings of the users and items
         all_embeddings = [self.E0.weight]
-        all_image_embeddings = [self.image_feat.weight.t()]
-        all_text_embeddings = [self.text_feat.weight.t()]
+        # all_image_embeddings = [self.image_feat.weight.t()]
+        # all_text_embeddings = [self.text_feat.weight.t()]
+        user_image_feature, item_image_feature, user_text_feature, item_text_feature = None, None, None, None
         e_layer_weight = self.E0.weight
-        image_layer_weight = self.image_feat.weight.t()
-        text_layer_weight = self.text_feat.weight.t()
+        image_layer_weight = self.text_feat_dropout(self.image_feat(self.image_embeddings_data))
+        text_layer_weight = self.image_feat_dropout(self.text_feat(self.text_embeddings_data))
 
         for _ in range(self.n_layers):
             e_layer_weight = torch.sparse.mm(self.user_item_matrix, e_layer_weight)
-            image_layer_weight = torch.sparse.mm(self.user_item_matrix, image_layer_weight) + self.image_feat.bias
-            text_layer_weight = torch.sparse.mm(self.user_item_matrix, text_layer_weight) + self.text_feat.bias
-
             all_embeddings.append(e_layer_weight)
-            all_image_embeddings.append(image_layer_weight)
-            all_text_embeddings.append(text_layer_weight)
+
+        # calculate the embeddings for side information
+        for _ in range(1):
+            user_image_feature = torch.sparse.mm(self.user_item_interactions, image_layer_weight)
+            item_image_feature = torch.sparse.mm(self.item_user_interactions, user_image_feature)
+
+            user_text_feature = torch.sparse.mm(self.user_item_interactions, text_layer_weight)
+            item_text_feature = torch.sparse.mm(self.item_user_interactions, user_text_feature)
 
         # stack the embeddings
         all_embeddings = torch.stack(all_embeddings, dim=0)
-        all_image_embeddings = torch.stack(all_image_embeddings, dim=0)
-        all_text_embeddings = torch.stack(all_text_embeddings, dim=0)
 
         # get the mean of the embeddings
         all_embeddings_mean = torch.mean(all_embeddings, dim=0)
-        all_image_embeddings_mean = torch.mean(all_image_embeddings, dim=0)
-        all_text_embeddings_mean = torch.mean(all_text_embeddings, dim=0)
 
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
-        user_image_embeddings, item_image_embeddings = torch.split(all_image_embeddings_mean,
-                                                                   [self.n_users, self.n_items], dim=0)
-        user_text_embeddings, item_text_embeddings = torch.split(all_text_embeddings_mean, [self.n_users, self.n_items],
-                                                                 dim=0)
 
-        return user_embeddings, item_embeddings, user_image_embeddings, item_image_embeddings, user_text_embeddings, item_text_embeddings
+        return user_embeddings, item_embeddings, user_image_feature, item_image_feature, user_text_feature, item_text_feature
 
     def forward(self, user_indices, pos_item_indices, neg_item_indices):
         user_embeddings, item_embeddings, user_image_embeddings, item_image_embeddings, user_text_embeddings, item_text_embeddings = self.propagate()
@@ -87,6 +97,11 @@ class MmModel(nn.Module):
         item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_image_embeddings, p=2,
                                                                               dim=1) + self.model_cat_rate * F.normalize(
             item_text_embeddings, p=2, dim=1)
+
+        self.user_image_embeddings = user_image_embeddings
+        self.item_image_embeddings = item_image_embeddings
+        self.user_text_embeddings = user_text_embeddings
+        self.item_text_embeddings = item_text_embeddings
 
         # get the embeddings of the users and items
         user_embeddings = user_embeddings[user_indices]
