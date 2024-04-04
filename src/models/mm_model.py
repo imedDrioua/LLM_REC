@@ -53,7 +53,6 @@ class MmModel(nn.Module):
         self.user_item_interactions = interactions.to(device)
         self.item_user_interactions = self.user_item_interactions.t().to(device)
 
-
     def propagate(self):
         # get the embeddings of the users and items
         all_embeddings = [self.E0.weight]
