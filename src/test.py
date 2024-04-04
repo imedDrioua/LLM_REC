@@ -5,9 +5,9 @@ import torch
 import numpy as np
 from tqdm import tqdm
 
-cores = 1
+cores = multiprocessing.cpu_count() // 5
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-Ks = [10]
+Ks = [10, 20, 50]
 
 
 def get_performance(r, auc, user_pos_test, Ks):
