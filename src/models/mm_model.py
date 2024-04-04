@@ -12,7 +12,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class MmModel(nn.Module):
     def __init__(self, n_users, n_items, embed_size, adjacency_matrix, interactions, image_embeddings_data,
-                 text_embeddings_data,
+                 text_embeddings_data, book_attributes_data, user_profiles_data,
                  n_layers, model_cat_rate=0.02, train_df=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,16 +32,25 @@ class MmModel(nn.Module):
         # optimizer
         # user and item embedding layers
         self.E0 = nn.Embedding(self.n_users + self.n_items, self.embed_size)
+
         # Side information layers
         self.text_feat = nn.Linear(image_embeddings_data.shape[1], self.embed_size)
         self.text_feat_dropout = nn.Dropout(0.2)
         self.image_feat = nn.Linear(text_embeddings_data.shape[1], self.embed_size)
         self.image_feat_dropout = nn.Dropout(0.2)
 
+        # augmented feature linear layers and dropout
+        self.user_profiles = nn.Linear(user_profiles_data.shape[1], self.embed_size)
+        self.user_profiles_dropout = nn.Dropout(0.2)
+        self.book_attributes = nn.Linear(book_attributes_data.shape[1], self.embed_size)
+        self.book_attributes_dropout = nn.Dropout(0.2)
+
         # weight initialization with xavier uniform
         init.xavier_uniform_(self.E0.weight)
         init.xavier_uniform_(self.text_feat.weight)
         init.xavier_uniform_(self.image_feat.weight)
+        init.xavier_uniform_(self.user_profiles.weight)
+        init.xavier_uniform_(self.book_attributes.weight)
 
         # Set model Parameter
         # self.model_parameters = nn.ParameterList([self.E0.weight, self.text_feat.weight, self.image_feat.weight])
@@ -50,6 +59,8 @@ class MmModel(nn.Module):
         self.user_item_matrix = self.user_item_matrix.to(device)
         self.image_embeddings_data = torch.tensor(image_embeddings_data, dtype=torch.float32).to(device)
         self.text_embeddings_data = torch.tensor(text_embeddings_data, dtype=torch.float32).to(device)
+        self.book_attributes_data = torch.tensor(book_attributes_data, dtype=torch.float32).to(device)
+        self.user_profiles_data = torch.tensor(user_profiles_data, dtype=torch.float32).to(device)
         self.user_item_interactions = interactions.to(device)
         self.item_user_interactions = self.user_item_interactions.t().to(device)
 
@@ -59,9 +70,13 @@ class MmModel(nn.Module):
         # all_image_embeddings = [self.image_feat.weight.t()]
         # all_text_embeddings = [self.text_feat.weight.t()]
         user_image_feature, item_image_feature, user_text_feature, item_text_feature = None, None, None, None
+        user_attributes, item_attributes, user_profile_feat, item_profile_feat = None, None, None, None
+
         e_layer_weight = self.E0.weight
         image_layer_weight = self.text_feat_dropout(self.image_feat(self.image_embeddings_data))
         text_layer_weight = self.image_feat_dropout(self.text_feat(self.text_embeddings_data))
+        user_profiles_weight = self.user_profiles_dropout(self.user_profiles(self.user_profiles_data))
+        items_attributes_weight = self.book_attributes_dropout(self.book_attributes(self.book_attributes_data))
 
         for _ in range(self.n_layers):
             e_layer_weight = torch.sparse.mm(self.user_item_matrix, e_layer_weight)
@@ -75,6 +90,12 @@ class MmModel(nn.Module):
             user_text_feature = torch.sparse.mm(self.user_item_interactions, text_layer_weight)
             item_text_feature = torch.sparse.mm(self.item_user_interactions, user_text_feature)
 
+            user_attributes = torch.sparse.mm(self.user_item_interactions, items_attributes_weight)
+            item_attributes = torch.sparse.mm(self.item_user_interactions, user_attributes)
+
+            item_profile_feat = torch.sparse.mm(self.item_user_interactions, user_profiles_weight)
+            user_profile_feat = torch.sparse.mm(self.user_item_interactions, item_profile_feat)
+
         # stack the embeddings
         all_embeddings = torch.stack(all_embeddings, dim=0)
 
@@ -84,10 +105,10 @@ class MmModel(nn.Module):
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
 
-        return user_embeddings, item_embeddings, user_image_feature, item_image_feature, user_text_feature, item_text_feature
+        return user_embeddings, item_embeddings, user_image_feature, item_image_feature, user_text_feature, item_text_feature, user_attributes, item_attributes, user_profile_feat, item_profile_feat
 
     def forward(self, user_indices, pos_item_indices, neg_item_indices):
-        user_embeddings, item_embeddings, user_image_embeddings, item_image_embeddings, user_text_embeddings, item_text_embeddings = self.propagate()
+        user_embeddings, item_embeddings, user_image_embeddings, item_image_embeddings, user_text_embeddings, item_text_embeddings, user_attributes_embeddings, item_attributes_embeddings, user_profile_feat_embd, item_profile_feat_embed = self.propagate()
 
         # side information incorporation
         user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_image_embeddings, p=2,
@@ -96,6 +117,13 @@ class MmModel(nn.Module):
         item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_image_embeddings, p=2,
                                                                               dim=1) + self.model_cat_rate * F.normalize(
             item_text_embeddings, p=2, dim=1)
+
+        # augmented data incorporation
+        user_embeddings += self.model_cat_rate * F.normalize(user_profile_feat_embd, p=2, dim=1)
+        user_embeddings += self.model_cat_rate * F.normalize(user_attributes_embeddings, p=2, dim=1)
+
+        item_embeddings += self.model_cat_rate * F.normalize(item_profile_feat_embed, p=2, dim=1)
+        item_embeddings += self.model_cat_rate * F.normalize(item_attributes_embeddings, p=2, dim=1)
 
         self.user_image_embeddings = user_image_embeddings
         self.item_image_embeddings = item_image_embeddings
@@ -107,17 +135,36 @@ class MmModel(nn.Module):
         pos_item_embeddings = item_embeddings[pos_item_indices]
         neg_item_embeddings = item_embeddings[neg_item_indices]
 
-        # get image embeddings of the users and items
+        # get image embeddings of the users and items 
         user_image_embeddings = user_image_embeddings[user_indices]
         pos_item_image_embeddings = item_image_embeddings[pos_item_indices]
         neg_item_image_embeddings = item_image_embeddings[neg_item_indices]
 
-        # get text embeddings of the users and items
+        # get text embeddings of the users and items 
         user_text_embeddings = user_text_embeddings[user_indices]
         pos_item_text_embeddings = item_text_embeddings[pos_item_indices]
         neg_item_text_embeddings = item_text_embeddings[neg_item_indices]
 
-        return user_embeddings, pos_item_embeddings, neg_item_embeddings, user_image_embeddings, pos_item_image_embeddings, neg_item_image_embeddings, user_text_embeddings, pos_item_text_embeddings, neg_item_text_embeddings
+        # get user profile embeddings of the users and items
+        user_profile_embeddings = user_profile_feat_embd[user_indices]
+        item_profile_pos_embeddings = item_profile_feat_embed[pos_item_indices]
+        item_profile_neg_embeddings = item_profile_feat_embed[neg_item_indices]
+        
+        # get user attributes embeddings of the users and items
+        user_attributes_embeddings = user_attributes_embeddings[user_indices]
+        item_attributes_pos_embeddings = item_attributes_embeddings[pos_item_indices]
+        item_attributes_neg_embeddings = item_attributes_embeddings[neg_item_indices]
+        
+        # create a dictionary of the embeddings
+        results = {
+            "embeddings": (user_embeddings, pos_item_embeddings, neg_item_embeddings),
+            "image_embeddings": (user_image_embeddings, pos_item_image_embeddings, neg_item_image_embeddings),
+            "text_embeddings": (user_text_embeddings, pos_item_text_embeddings, neg_item_text_embeddings),
+            "profile_embeddings": (user_profile_embeddings, item_profile_pos_embeddings, item_profile_neg_embeddings),
+            "attributes_embeddings": (user_attributes_embeddings, item_attributes_pos_embeddings, item_attributes_neg_embeddings)
+        }
+
+        return results
 
     def create_adjacency_matrix(self, train_df):
         # check if the user_item_matrix is already created

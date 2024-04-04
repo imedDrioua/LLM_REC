@@ -10,13 +10,13 @@ class BooksDataset:
 
     def __init__(self, data_dir, batch_size=1024):
         self.data_dir = data_dir
-        #self.train_matrix = pd.read_csv(f'{data_dir}/train_df.csv').values
+        # self.train_matrix = pd.read_csv(f'{data_dir}/train_df.csv').values
         self.images = np.load(f'{data_dir}/embed_image.npy')
         self.text = np.load(f'{data_dir}/embed_text.npy')
         self.user_profiles = np.load(f'{data_dir}/users_profiles_embeddings.npy')
         self.books_attributes = np.load(f'{data_dir}/books_attributes_embeddings.npy')
         self.interactions = torch.load(f'{data_dir}/train_matrix.pt')
-        # check if the adjacency matrix exists, if not, create it
+        # check if the adjacency matrix exists, if not, it will be created with the model
         self.adjacency_matrix = None
         if os.path.exists(f'{data_dir}/adjacency_matrix.pt'):
             self.adjacency_matrix = torch.load(f'{data_dir}/adjacency_matrix.pt')
@@ -32,7 +32,7 @@ class BooksDataset:
 
         # create a dict to map each dataset name to its corresponding data
         self.datasets = {
-            #'train_matrix': self.train_matrix,
+            # 'train_matrix': self.train_matrix,
             'images': self.images,
             'text': self.text,
             'user_profiles': self.user_profiles,
@@ -81,7 +81,7 @@ class BooksDataset:
         users = []
         pos_books = []
         neg_books = []
-       
+
         # sample n_users, one positive and one negative book for each user
         for _ in range(n_users):
             user = np.random.randint(low=0, high=self.n_users, size=1)[0]
