@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="fr" data-content_root="../">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>train module &mdash; Documentation ppd 0.0</title>
+  <title>Train class module &mdash; LLMrec 0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -15,15 +15,14 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=0bfd95fa"></script>
+        <script src="../_static/documentation_options.js?v=837179f8"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/translations.js?v=d99ca74e"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Recherche" href="../search.html" />
-    <link rel="next" title="test module" href="test.html" />
-    <link rel="prev" title="metrics module" href="metrics.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Test class module" href="test.html" />
+    <link rel="prev" title="Welcome to LLMrec’s documentation!" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,11 +34,11 @@
           
           
           <a href="../index.html" class="icon icon-home">
-            ppd
+            LLMrec
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -47,20 +46,19 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="metrics.html">metrics module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">train module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#train.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#train.Trainer.evaluate"><code class="docutils literal notranslate"><span class="pre">Trainer.evaluate()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#train.Trainer.feat_reg_loss_calculation"><code class="docutils literal notranslate"><span class="pre">Trainer.feat_reg_loss_calculation()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#train.Trainer.train"><code class="docutils literal notranslate"><span class="pre">Trainer.train()</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Train class module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#train.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#train.Trainer.evaluate"><code class="docutils literal notranslate"><span class="pre">Trainer.evaluate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#train.Trainer.feat_reg_loss_calculation"><code class="docutils literal notranslate"><span class="pre">Trainer.feat_reg_loss_calculation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#train.Trainer.train"><code class="docutils literal notranslate"><span class="pre">Trainer.train()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="test.html">test module</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="test.html">Test class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLM_augmentation.html">LLM augmentations</a></li>
 </ul>
 
         </div>
@@ -69,7 +67,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">ppd</a>
+          <a href="../index.html">LLMrec</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -77,10 +75,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
-      <li class="breadcrumb-item active">train module</li>
+      <li class="breadcrumb-item active">Train class module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/API/train.rst.txt" rel="nofollow"> Afficher la source de la page</a>
+            <a href="../_sources/API/train.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -89,46 +86,70 @@
            <div itemprop="articleBody">
              
   <section id="module-train">
-<span id="train-module"></span><h1>train module<a class="headerlink" href="#module-train" title="Link to this heading"></a></h1>
+<span id="train-class-module"></span><h1>Train class module<a class="headerlink" href="#module-train" title="Link to this heading"></a></h1>
+<p>Script that defines the Trainer class which is used to train the model on the training set</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="train.Trainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side_info_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augmentation_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.012</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer" title="Link to this definition"></a></dt>
-<dd><p>Bases : <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side_info_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augmentation_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.012</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="train.Trainer.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_users</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer.evaluate" title="Link to this definition"></a></dt>
-<dd><p>Evaluate the model on the test set
-:param test_users:  dict, test users
-:return:  evaluation results
-:rtype: dict</p>
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_users</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the model on the test set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>test_users</strong> – dict, test users</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>evaluation results</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="train.Trainer.feat_reg_loss_calculation">
-<span class="sig-name descname"><span class="pre">feat_reg_loss_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g_item_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_item_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_user_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_user_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat_reg_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer.feat_reg_loss_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer.feat_reg_loss_calculation" title="Link to this definition"></a></dt>
-<dd><p>Calculate the feature regularization loss
-:param g_item_image:  item image embeddings
-:type g_item_image: torch.Tensor
-:param g_item_text:  item text embeddings
-:type g_item_text: torch.Tensor
-:param g_user_image:  user image embeddings
-:type g_user_image: torch.Tensor
-:param g_user_text:  user text embeddings
-:type g_user_text: torch.Tensor
-:param feat_reg_decay:  feature regularization decay
-:type feat_reg_decay: float
-:return:  feature regularization loss
-:rtype: float</p>
+<span class="sig-name descname"><span class="pre">feat_reg_loss_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g_item_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_item_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_user_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_user_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat_reg_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer.feat_reg_loss_calculation" title="Link to this definition"></a></dt>
+<dd><p>Calculate the feature regularization loss</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>g_item_image</strong> (<em>torch.Tensor</em>) – item image embeddings</p></li>
+<li><p><strong>g_item_text</strong> (<em>torch.Tensor</em>) – item text embeddings</p></li>
+<li><p><strong>g_user_image</strong> (<em>torch.Tensor</em>) – user image embeddings</p></li>
+<li><p><strong>g_user_text</strong> (<em>torch.Tensor</em>) – user text embeddings</p></li>
+<li><p><strong>feat_reg_decay</strong> (<em>float</em>) – feature regularization decay</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>feature regularization loss</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="train.Trainer.train">
-<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer.train" title="Link to this definition"></a></dt>
-<dd><p>Train the model
-:param epochs:  number of epochs
-:param batch_size:  batch size
-:return:  None
-:rtype: None</p>
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer.train" title="Link to this definition"></a></dt>
+<dd><p>Train the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>epochs</strong> – number of epochs</p></li>
+<li><p><strong>batch_size</strong> – batch size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -138,20 +159,20 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
-        <a href="metrics.html" class="btn btn-neutral float-left" title="metrics module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
-        <a href="test.html" class="btn btn-neutral float-right" title="test module" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to LLMrec’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="test.html" class="btn btn-neutral float-right" title="Test class module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Droits d'auteur 2024, Drioua Imed, Lamis Boufafa.</p>
+    <p>&#169; Copyright 2024, DRIOUA Imed, BOUFAFA Lamis.</p>
   </div>
 
-  Compilé avec <a href="https://www.sphinx-doc.org/">Sphinx</a> en utilisant un
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">thème</a>
-    fourni par <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
    
 
 </footer>

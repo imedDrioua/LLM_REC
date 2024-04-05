@@ -1,5 +1,5 @@
-test module
-===========
+Test class module
+=================
 
 .. automodule:: test
    :members:

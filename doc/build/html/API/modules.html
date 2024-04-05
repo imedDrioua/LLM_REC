@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="fr" data-content_root="../">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>src &mdash; Documentation ppd 0.0</title>
+  <title>Data Loader &mdash; LLMrec 0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -15,15 +15,14 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=0bfd95fa"></script>
+        <script src="../_static/documentation_options.js?v=837179f8"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/translations.js?v=d99ca74e"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Recherche" href="../search.html" />
-    <link rel="next" title="metrics module" href="metrics.html" />
-    <link rel="prev" title="Welcome to ppd’s documentation!" href="../index.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data loader module" href="data_loader.html" />
+    <link rel="prev" title="User profile augmentation prompt module" href="user_profile.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,11 +34,11 @@
           
           
           <a href="../index.html" class="icon icon-home">
-            ppd
+            LLMrec
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -47,10 +46,13 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">src</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html">metrics module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="train.html">train module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="test.html">test module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="train.html">Train class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test.html">Test class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLM_augmentation.html">LLM augmentations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data Loader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_loader.html">Data loader module</a></li>
 </ul>
 </li>
 </ul>
@@ -61,7 +63,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">ppd</a>
+          <a href="../index.html">LLMrec</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -69,9 +71,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">src</li>
+      <li class="breadcrumb-item active">Data Loader</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/API/modules.rst.txt" rel="nofollow"> Afficher la source de la page</a>
+            <a href="../_sources/API/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -79,33 +81,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="src">
-<h1>src<a class="headerlink" href="#src" title="Link to this heading"></a></h1>
+  <section id="data-loader">
+<h1>Data Loader<a class="headerlink" href="#data-loader" title="Link to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="metrics.html">metrics module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.F1"><code class="docutils literal notranslate"><span class="pre">F1()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.auc"><code class="docutils literal notranslate"><span class="pre">auc()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.average_precision"><code class="docutils literal notranslate"><span class="pre">average_precision()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.dcg_at_k"><code class="docutils literal notranslate"><span class="pre">dcg_at_k()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.hit_at_k"><code class="docutils literal notranslate"><span class="pre">hit_at_k()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.mean_average_precision"><code class="docutils literal notranslate"><span class="pre">mean_average_precision()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.ndcg_at_k"><code class="docutils literal notranslate"><span class="pre">ndcg_at_k()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.precision_at_k"><code class="docutils literal notranslate"><span class="pre">precision_at_k()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.recall"><code class="docutils literal notranslate"><span class="pre">recall()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="metrics.html#metrics.recall_at_k"><code class="docutils literal notranslate"><span class="pre">recall_at_k()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="train.html">train module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="train.html#train.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="train.html#train.Trainer.evaluate"><code class="docutils literal notranslate"><span class="pre">Trainer.evaluate()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="train.html#train.Trainer.feat_reg_loss_calculation"><code class="docutils literal notranslate"><span class="pre">Trainer.feat_reg_loss_calculation()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="train.html#train.Trainer.train"><code class="docutils literal notranslate"><span class="pre">Trainer.train()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="test.html">test module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_loader.html">Data loader module</a></li>
 </ul>
 </div>
 </section>
@@ -113,20 +93,20 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
-        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to ppd’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
-        <a href="metrics.html" class="btn btn-neutral float-right" title="metrics module" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_profile.html" class="btn btn-neutral float-left" title="User profile augmentation prompt module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_loader.html" class="btn btn-neutral float-right" title="Data loader module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Droits d'auteur 2024, Drioua Imed, Lamis Boufafa.</p>
+    <p>&#169; Copyright 2024, DRIOUA Imed, BOUFAFA Lamis.</p>
   </div>
 
-  Compilé avec <a href="https://www.sphinx-doc.org/">Sphinx</a> en utilisant un
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">thème</a>
-    fourni par <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
    
 
 </footer>

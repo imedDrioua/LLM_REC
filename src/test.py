@@ -1,27 +1,28 @@
-
+"""
+Script that defines the Tester class which is used to test the model performance on the test set
+"""
 import multiprocessing
 import torch
 import numpy as np
 from tqdm import tqdm
 from metrics import get_performance, rank_list_by_heapq, rank_list_by_sorted
 
-cores = multiprocessing.cpu_count() // 5
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-Ks = "[10, 20, 50]"
-
 
 class Tester:
-    def __init__(self, dataset, ks=Ks):
+    def __init__(self, dataset, ks="[10, 20, 50]"):
         self.dataset = dataset
         self.USR_NUM, self.ITEM_NUM = dataset.n_users, dataset.n_items
         self.BATCH_SIZE = dataset.batch_size
         self.Ks = eval(ks)
         self.test_users_keys = [int(x) for x in list(self.dataset.get_dataset("test_dict").keys())]
+        self.cores = multiprocessing.cpu_count() // 5
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.test_items = None
 
     def test_one_user(self, x, test_flag='part'):
         """
         Test the performance of the model for one user
+
         :param x:  list, user u's ratings for user u
         :param test_flag:  str, test flag
         :return:  performance: dict
@@ -53,11 +54,12 @@ class Tester:
         else:
             r, auc = rank_list_by_sorted(rating, user_pos_test, test_items, self.Ks)
 
-        return get_performance(r, auc, user_pos_test, Ks)
+        return get_performance(r, auc, user_pos_test, self.Ks)
 
     def test(self, ua_embeddings, ia_embeddings, batch_size, is_val, batch_test_flag=False):
         """
         Test the performance of the model
+
         :param ua_embeddings:  user embeddings
         :type ua_embeddings: torch.Tensor
         :param ia_embeddings:  item embeddings
@@ -71,10 +73,10 @@ class Tester:
         :return:  result of the model performance
         :rtype: dict
         """
-        result = {'precision': np.zeros(len(Ks)), 'recall': np.zeros(len(Ks)), 'ndcg': np.zeros(len(Ks)),
-                  'hit_ratio': np.zeros(len(Ks)), 'auc': 0.}
+        result = {'precision': np.zeros(len(self.Ks)), 'recall': np.zeros(len(self.Ks)), 'ndcg': np.zeros(len(self.Ks)),
+                  'hit_ratio': np.zeros(len(self.Ks)), 'auc': 0.}
 
-        pool = multiprocessing.Pool(cores)
+        pool = multiprocessing.Pool(self.cores)
 
         u_batch_size = batch_size * 2
 

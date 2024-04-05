@@ -1,4 +1,6 @@
-# this script defines the training process of the model
+"""
+Script that defines the Trainer class which is used to train the model on the training set
+"""
 from time import time
 import torch
 import torch.nn as nn
@@ -19,6 +21,7 @@ class Trainer:
     def feat_reg_loss_calculation(self, g_item_image, g_item_text, g_user_image, g_user_text, feat_reg_decay=1e-5):
         """
         Calculate the feature regularization loss
+
         :param g_item_image:  item image embeddings
         :type g_item_image: torch.Tensor
         :param g_item_text:  item text embeddings
@@ -41,6 +44,7 @@ class Trainer:
     def train(self, epochs, batch_size=1024):
         """
         Train the model
+
         :param epochs:  number of epochs
         :param batch_size:  batch size
         :return:  None
@@ -119,6 +123,7 @@ class Trainer:
     def evaluate(self, test_users):
         """
         Evaluate the model on the test set
+
         :param test_users:  dict, test users
         :return:  evaluation results
         :rtype: dict

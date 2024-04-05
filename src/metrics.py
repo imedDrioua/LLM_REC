@@ -1,5 +1,7 @@
+"""
+Script that defines the metrics which are used to evaluate the model
+"""
 import heapq
-
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
@@ -7,6 +9,7 @@ from sklearn.metrics import roc_auc_score
 def recall(rank, ground_truth, N):
     """
     calculate recall
+
     :param rank:  ranked list
     :type rank: list
     :param ground_truth:  ground truth list
@@ -164,6 +167,7 @@ def calculate_auc(ground_truth, prediction):
 def get_performance(r, auc, user_pos_test, Ks):
     """
     Get the performance of the model
+
     :param r:  model relevant items
     :type r: list
     :param auc:  area under the curve
@@ -190,6 +194,7 @@ def get_performance(r, auc, user_pos_test, Ks):
 def rank_list_by_heapq(rating, user_pos_test, test_items,Ks):
     """
     Rank the list by heapq
+
     :param rating:  model predicted ratings
     :type rating: dict
     :param user_pos_test:  user positive items in the test set
@@ -219,6 +224,7 @@ def rank_list_by_heapq(rating, user_pos_test, test_items,Ks):
 def rank_list_by_sorted(rating, user_pos_test, test_items, Ks):
     """
     Rank the list by sorted
+
     :param rating:  model predicted ratings
     :type rating: dict
     :param user_pos_test:  user positive items in the test set
@@ -250,6 +256,7 @@ def rank_list_by_sorted(rating, user_pos_test, test_items, Ks):
 def get_auc(item_score, user_pos_test):
     """
     Get the area under the curve
+
     :param item_score:  items scores
     :type item_score: dict
     :param user_pos_test:  user positive items in the test set

@@ -1,10 +1,10 @@
-src
-===
+Data Loader
+===========
+
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
 
-   metrics
-   train
-   test
+   data_loader
+

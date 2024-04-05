@@ -1,5 +1,3 @@
-# import the necessary libraries
-import pandas as pd
 import numpy as np
 import os
 import torch
@@ -53,6 +51,7 @@ class BooksDataset:
     def get_dataset(self, dataset):
         """
         Return the dataset by name
+
         :param dataset: dataset name
         :type dataset: str
         :return: dataset
@@ -64,6 +63,7 @@ class BooksDataset:
     def get_all_datasets(self):
         """
         Return all the datasets
+
         :return: all the datasets defined in the class
         :rtype: dict
         """
@@ -73,6 +73,7 @@ class BooksDataset:
     def sample(self, n_users):
         """
         Sample n_users from the train dataset, and return the users, positive and negative books
+
         :param n_users: number of users to sample
         :type n_users: int
         :return:  users list, positive books list, negative books list
@@ -100,6 +101,7 @@ class BooksDataset:
     def describe(self):
         """
         Print the shape of all the datasets, the number of interactions in the train matrix, and the sparsity of the train matrix
+
         :return:  None
         :rtype: None
         """

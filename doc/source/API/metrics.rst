@@ -1,4 +1,4 @@
-metrics module
+Metrics module
 ==============
 
 .. automodule:: metrics

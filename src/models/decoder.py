@@ -1,3 +1,6 @@
+"""
+Script that defines the Decoder class
+"""
 import torch
 import torch.nn as nn
 

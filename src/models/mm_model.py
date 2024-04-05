@@ -1,4 +1,6 @@
-# import the necessary packages
+"""
+This module contains the implementation of the MMModel class which is a PyTorch implementation of the MMGCN model.
+"""
 import torch
 import torch.nn as nn
 from scipy.sparse import dok_matrix

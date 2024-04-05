@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="fr" data-content_root="./">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Documentation ppd 0.0</title>
+  <title>Index &mdash; LLMrec 0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -14,13 +14,12 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=0bfd95fa"></script>
+        <script src="_static/documentation_options.js?v=837179f8"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="_static/translations.js?v=d99ca74e"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Recherche" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,11 +31,11 @@
           
           
           <a href="index.html" class="icon icon-home">
-            ppd
+            LLMrec
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -44,7 +43,12 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="API/modules.html">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/train.html">Train class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/test.html">Test class module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/metrics.html">Metrics module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/LLM_augmentation.html">LLM augmentations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API/modules.html">Data Loader</a></li>
 </ul>
 
         </div>
@@ -53,7 +57,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">ppd</a>
+          <a href="index.html">LLMrec</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -75,25 +79,52 @@
 
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  
 </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.auc">auc() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.average_precision">average_precision() (in module metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/data_loader.html#data_loader.BooksDataset">BooksDataset (class in data_loader)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.average_precision">average_precision() (dans le module metrics)</a>
+      <li><a href="API/loss_functions.html#loss_functions.bpr_loss_aug">bpr_loss_aug() (in module loss_functions)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/metrics.html#metrics.calculate_auc">calculate_auc() (in module metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/mm_model.html#mm_model.MmModel.create_adjacency_matrix">create_adjacency_matrix() (mm_model.MmModel method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -101,7 +132,27 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.dcg_at_k">dcg_at_k() (dans le module metrics)</a>
+      <li>
+    data_loader
+
+      <ul>
+        <li><a href="API/data_loader.html#module-data_loader">module</a>
+</li>
+      </ul></li>
+      <li><a href="API/metrics.html#metrics.dcg_at_k">dcg_at_k() (in module metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    decoder
+
+      <ul>
+        <li><a href="API/decoder.html#module-decoder">module</a>
+</li>
+      </ul></li>
+      <li><a href="API/decoder.html#decoder.Decoder">Decoder (class in decoder)</a>
+</li>
+      <li><a href="API/data_loader.html#data_loader.BooksDataset.describe">describe() (data_loader.BooksDataset method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -109,7 +160,7 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/train.html#train.Trainer.evaluate">evaluate() (méthode train.Trainer)</a>
+      <li><a href="API/train.html#train.Trainer.evaluate">evaluate() (train.Trainer method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -117,11 +168,33 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.F1">F1() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.F1">F1() (in module metrics)</a>
+</li>
+      <li><a href="API/train.html#train.Trainer.feat_reg_loss_calculation">feat_reg_loss_calculation() (train.Trainer method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/train.html#train.Trainer.feat_reg_loss_calculation">feat_reg_loss_calculation() (méthode train.Trainer)</a>
+      <li><a href="API/decoder.html#decoder.Decoder.forward">forward() (decoder.Decoder method)</a>
+
+      <ul>
+        <li><a href="API/mm_model.html#mm_model.MmModel.forward">(mm_model.MmModel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/data_loader.html#data_loader.BooksDataset.get_all_datasets">get_all_datasets() (data_loader.BooksDataset method)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.get_auc">get_auc() (in module metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/data_loader.html#data_loader.BooksDataset.get_dataset">get_dataset() (data_loader.BooksDataset method)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.get_performance">get_performance() (in module metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -129,15 +202,49 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.hit_at_k">hit_at_k() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.hit_at_k">hit_at_k() (in module metrics)</a>
 </li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    item_attributes
+
+      <ul>
+        <li><a href="API/item_attributes.html#module-item_attributes">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/item_attributes.html#item_attributes.llm_book_profile">llm_book_profile() (in module item_attributes)</a>
+</li>
+      <li><a href="API/user_item_interactions.html#user_item_interactions.llm_user_item_interaction">llm_user_item_interaction() (in module user_item_interactions)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/user_profile.html#user_profile.llm_user_profile">llm_user_profile() (in module user_profile)</a>
+</li>
+      <li>
+    loss_functions
+
+      <ul>
+        <li><a href="API/loss_functions.html#module-loss_functions">module</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.mean_average_precision">mean_average_precision() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.mean_average_precision">mean_average_precision() (in module metrics)</a>
 </li>
       <li>
     metrics
@@ -146,17 +253,38 @@
         <li><a href="API/metrics.html#module-metrics">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    mm_model
+
+      <ul>
+        <li><a href="API/mm_model.html#module-mm_model">module</a>
+</li>
+      </ul></li>
+      <li><a href="API/mm_model.html#mm_model.MmModel">MmModel (class in mm_model)</a>
+</li>
       <li>
     module
 
       <ul>
+        <li><a href="API/data_loader.html#module-data_loader">data_loader</a>
+</li>
+        <li><a href="API/decoder.html#module-decoder">decoder</a>
+</li>
+        <li><a href="API/item_attributes.html#module-item_attributes">item_attributes</a>
+</li>
+        <li><a href="API/loss_functions.html#module-loss_functions">loss_functions</a>
+</li>
         <li><a href="API/metrics.html#module-metrics">metrics</a>
+</li>
+        <li><a href="API/mm_model.html#module-mm_model">mm_model</a>
 </li>
         <li><a href="API/test.html#module-test">test</a>
 </li>
         <li><a href="API/train.html#module-train">train</a>
+</li>
+        <li><a href="API/user_item_interactions.html#module-user_item_interactions">user_item_interactions</a>
+</li>
+        <li><a href="API/user_profile.html#module-user_profile">user_profile</a>
 </li>
       </ul></li>
   </ul></td>
@@ -165,7 +293,7 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.ndcg_at_k">ndcg_at_k() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.ndcg_at_k">ndcg_at_k() (in module metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -173,7 +301,13 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.precision_at_k">precision_at_k() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.precision_at_k">precision_at_k() (in module metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/mm_model.html#mm_model.MmModel.propagate">propagate() (mm_model.MmModel method)</a>
+</li>
+      <li><a href="API/loss_functions.html#loss_functions.prune_loss">prune_loss() (in module loss_functions)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -181,11 +315,23 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.recall">recall() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.rank_list_by_heapq">rank_list_by_heapq() (in module metrics)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.rank_list_by_sorted">rank_list_by_sorted() (in module metrics)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/metrics.html#metrics.recall_at_k">recall_at_k() (dans le module metrics)</a>
+      <li><a href="API/metrics.html#metrics.recall">recall() (in module metrics)</a>
+</li>
+      <li><a href="API/metrics.html#metrics.recall_at_k">recall_at_k() (in module metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/data_loader.html#data_loader.BooksDataset.sample">sample() (data_loader.BooksDataset method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -200,6 +346,14 @@
         <li><a href="API/test.html#module-test">module</a>
 </li>
       </ul></li>
+      <li><a href="API/test.html#test.Tester.test">test() (test.Tester method)</a>
+</li>
+      <li><a href="API/test.html#test.Tester.test_one_user">test_one_user() (test.Tester method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="API/test.html#test.Tester">Tester (class in test)</a>
+</li>
       <li>
     train
 
@@ -207,12 +361,32 @@
         <li><a href="API/train.html#module-train">module</a>
 </li>
       </ul></li>
+      <li><a href="API/train.html#train.Trainer.train">train() (train.Trainer method)</a>
+</li>
+      <li><a href="API/train.html#train.Trainer">Trainer (class in train)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    user_item_interactions
+
+      <ul>
+        <li><a href="API/user_item_interactions.html#module-user_item_interactions">module</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="API/train.html#train.Trainer.train">train() (méthode train.Trainer)</a>
+      <li>
+    user_profile
+
+      <ul>
+        <li><a href="API/user_profile.html#module-user_profile">module</a>
 </li>
-      <li><a href="API/train.html#train.Trainer">Trainer (classe dans train)</a>
-</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -225,12 +399,12 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Droits d'auteur 2024, Drioua Imed, Lamis Boufafa.</p>
+    <p>&#169; Copyright 2024, DRIOUA Imed, BOUFAFA Lamis.</p>
   </div>
 
-  Compilé avec <a href="https://www.sphinx-doc.org/">Sphinx</a> en utilisant un
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">thème</a>
-    fourni par <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
    
 
 </footer>

@@ -1,5 +1,6 @@
-# this script defines the loss functions (BPR) used in the model
-# Path: src/models/loss_functions.py
+"""
+Script that defines the loss functions for the model
+"""
 import torch
 import numpy as np
 import torch.nn.functional as f
@@ -10,6 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def bpr_loss_aug(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71, decay=1e-5):
     """
     Bayesian Personalized Ranking (BPR) loss function
+
     :param users:  user embeddings
     :param pos_items:  positive item embeddings
     :param neg_items:  negative item embeddings
@@ -37,6 +39,7 @@ def bpr_loss_aug(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0
 def prune_loss(prediction, drop_rate):
     """
     Prune the loss
+
     :param prediction:  prediction
     :param drop_rate:    drop rate
     :return:  loss_update
