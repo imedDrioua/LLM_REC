@@ -17,6 +17,21 @@ class Trainer:
         self.augmentation_rate = augmentation_rate
 
     def feat_reg_loss_calculation(self, g_item_image, g_item_text, g_user_image, g_user_text, feat_reg_decay=1e-5):
+        """
+        Calculate the feature regularization loss
+        :param g_item_image:  item image embeddings
+        :type g_item_image: torch.Tensor
+        :param g_item_text:  item text embeddings
+        :type g_item_text: torch.Tensor
+        :param g_user_image:  user image embeddings
+        :type g_user_image: torch.Tensor
+        :param g_user_text:  user text embeddings
+        :type g_user_text: torch.Tensor
+        :param feat_reg_decay:  feature regularization decay
+        :type feat_reg_decay: float
+        :return:  feature regularization loss
+        :rtype: float
+        """
         feat_reg = 1. / 2 * (g_item_image ** 2).sum() + 1. / 2 * (g_item_text ** 2).sum() \
                    + 1. / 2 * (g_user_image ** 2).sum() + 1. / 2 * (g_user_text ** 2).sum()
         feat_reg = feat_reg / self.dataset.n_items

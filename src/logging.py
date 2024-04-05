@@ -5,13 +5,6 @@ from datetime import datetime
 
 class Logger:
     def __init__(self, filename, is_debug, path='./logs/'):
-        """
-        init logger
-
-        :param filename:
-        :param is_debug:
-        :param path:
-        """
         self.filename = filename
         self.path = path
         self.log_ = not is_debug
@@ -20,8 +13,9 @@ class Logger:
         """
         log the message
 
-        :param s:
-        :return:
+        :param s: message
+        :type s: str
+        :return: None
         """
         s = str(s)
         print(datetime.now().strftime('%Y-%m-%d %H:%M: '), s)

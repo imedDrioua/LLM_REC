@@ -130,7 +130,6 @@ class Tester:
     def test_one_user(self, x, test_flag='part'):
         """
         Test the performance of the model for one user
-
         :param x:  list, user u's ratings for user u
         :param test_flag:  str, test flag
         :return:  performance: dict

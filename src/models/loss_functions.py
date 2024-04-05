@@ -7,7 +7,7 @@ import torch.nn.functional as f
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def bpr_loss(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71, decay=1e-5):
+def bpr_loss_aug(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71, decay=1e-5):
     """
     Bayesian Personalized Ranking (BPR) loss function
     :param users:  user embeddings
