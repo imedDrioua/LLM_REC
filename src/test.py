@@ -1,125 +1,17 @@
-from src import metrics as metrics
+
 import multiprocessing
-import heapq
 import torch
 import numpy as np
 from tqdm import tqdm
+from metrics import get_performance, rank_list_by_heapq, rank_list_by_sorted
 
 cores = multiprocessing.cpu_count() // 5
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-Ks = [10, 20, 50]
-
-
-def get_performance(r, auc, user_pos_test, Ks):
-    """
-    Get the performance of the model
-    :param r:  model relevant items
-    :type r: list
-    :param auc:  area under the curve
-    :type auc: float
-    :param user_pos_test:  user positive items in the test set
-    :type user_pos_test: list
-    :param Ks:  list of Ks
-    :type Ks: list
-    :return:  metrics values
-    :rtype: dict
-    """
-    precision, recall, ndcg, hit_ratio = [], [], [], []
-
-    for K in Ks:
-        precision.append(metrics.precision_at_k(r, K))
-        recall.append(metrics.recall_at_k(r, K, len(user_pos_test)))
-        ndcg.append(metrics.ndcg_at_k(r, K))
-        hit_ratio.append(metrics.hit_at_k(r, K))
-
-    return {'recall': np.array(recall), 'precision': np.array(precision),
-            'ndcg': np.array(ndcg), 'hit_ratio': np.array(hit_ratio), 'auc': auc}
-
-
-def rank_list_by_heapq(rating, user_pos_test, test_items):
-    """
-    Rank the list by heapq
-    :param rating:  model predicted ratings
-    :type rating: dict
-    :param user_pos_test:  user positive items in the test set
-    :type user_pos_test: list
-    :param test_items:  test items
-    :type rating: dict
-    :return:  r, auc
-    :rtype: list, float
-    """
-    item_score = {}
-    for i in test_items:
-        item_score[i] = rating[i]
-
-    K_max = max(Ks)
-    K_max_item_score = heapq.nlargest(K_max, item_score, key=item_score.get)
-
-    r = []
-    for i in K_max_item_score:
-        if i in user_pos_test:
-            r.append(1)
-        else:
-            r.append(0)
-    auc = 0.
-    return r, auc
-
-
-def rank_list_by_sorted(rating, user_pos_test, test_items):
-    """
-    Rank the list by sorted
-    :param rating:  model predicted ratings
-    :type rating: dict
-    :param user_pos_test:  user positive items in the test set
-    :type user_pos_test: list
-    :param test_items:  test items
-    :type test_items: list
-    :return:  r, auc
-    """
-    item_score = {}
-    for i in test_items:
-        item_score[i] = rating[i]
-
-    K_max = max(Ks)
-    K_max_item_score = heapq.nlargest(K_max, item_score, key=item_score.get)
-
-    r = []
-    for i in K_max_item_score:
-        if i in user_pos_test:
-            r.append(1)
-        else:
-            r.append(0)
-    auc = get_auc(item_score, user_pos_test)
-    return r, auc
-
-
-def get_auc(item_score, user_pos_test):
-    """
-    Get the area under the curve
-    :param item_score:  items scores
-    :type item_score: dict
-    :param user_pos_test:  user positive items in the test set
-    :type user_pos_test: list
-    :return:  auc
-    :rtype: float
-    """
-    item_score = sorted(item_score.items(), key=lambda kv: kv[1])
-    item_score.reverse()
-    item_sort = [x[0] for x in item_score]
-    posterior = [x[1] for x in item_score]
-
-    r = []
-    for i in item_sort:
-        if i in user_pos_test:
-            r.append(1)
-        else:
-            r.append(0)
-    auc = metrics.auc(ground_truth=r, prediction=posterior)
-    return auc
+Ks = "[10, 20, 50]"
 
 
 class Tester:
-    def __init__(self, dataset, ks='[10]'):
+    def __init__(self, dataset, ks=Ks):
         self.dataset = dataset
         self.USR_NUM, self.ITEM_NUM = dataset.n_users, dataset.n_items
         self.BATCH_SIZE = dataset.batch_size
@@ -157,9 +49,9 @@ class Tester:
         test_items = list(all_items - set(training_items))
 
         if test_flag == 'part':
-            r, auc = rank_list_by_heapq(rating, user_pos_test, test_items)
+            r, auc = rank_list_by_heapq(rating, user_pos_test, test_items, self.Ks)
         else:
-            r, auc = rank_list_by_sorted(rating, user_pos_test, test_items)
+            r, auc = rank_list_by_sorted(rating, user_pos_test, test_items, self.Ks)
 
         return get_performance(r, auc, user_pos_test, Ks)
 
@@ -214,5 +106,3 @@ class Tester:
         assert count == n_test_users
         pool.close()
         return result
-
-
