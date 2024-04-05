@@ -10,13 +10,14 @@ from src.test import Tester
 
 
 class Trainer:
-    def __init__(self, dataset, model, lr=0.0001, side_info_rate=0.0001, augmentation_rate=0.012):
+    def __init__(self, dataset, model, lr=0.0001, side_info_rate=0.0001, augmentation_rate=0.012, aug_sample_rate=0.01):
         self.dataset = dataset
         self.model = model
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.tester = Tester(self.dataset)
         self.side_info_rate = side_info_rate
         self.augmentation_rate = augmentation_rate
+        self.aug_sample_rate = aug_sample_rate
 
     def feat_reg_loss_calculation(self, g_item_image, g_item_text, g_user_image, g_user_text, feat_reg_decay=1e-5):
         """
@@ -58,6 +59,15 @@ class Trainer:
             loss = 0.
             for idx in tqdm(range(n_batch)):
                 users, pos_items, neg_items = self.dataset.sample(batch_size)
+
+                # sample augmented interactions
+                users_aug, pos_items_aug, neg_items_aug = self.dataset.sample_augmented_interactions(users,
+                                                                                                     self.aug_sample_rate)
+
+                # augment the interactions
+                users += users_aug
+                pos_items += pos_items_aug
+                neg_items += neg_items_aug
 
                 self.optimizer.zero_grad()
                 embeddings_dict = self.model(

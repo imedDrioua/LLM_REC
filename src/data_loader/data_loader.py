@@ -2,6 +2,7 @@ import numpy as np
 import os
 import torch
 import json
+import random
 
 
 class BooksDataset:
@@ -27,6 +28,8 @@ class BooksDataset:
             self.test_dict = json.load(f)
         with open(f'{data_dir}/validation.json', 'r') as f:
             self.val_dict = json.load(f)
+        with open(f'{data_dir}/augmented_interactions_dict.json', 'r') as f:
+            self.augmented_interactions = json.load(f)
 
         # create a dict to map each dataset name to its corresponding data
         self.datasets = {
@@ -97,6 +100,28 @@ class BooksDataset:
             neg_books.append(neg_book)
 
         return users, pos_books, neg_books
+
+    def sample_augmented_interactions(self, users, aug_sample_rate):
+        """
+        Sample users from the augmented interactions, and return the users, positive and negative books
+
+        :param users:  list of users for whom the augmented interactions will be sampled
+        :type users: list
+        :param aug_sample_rate:  the rate of users to sample
+        :type aug_sample_rate: float
+        :return:  users list, positive books list, negative books list
+        :rtype: list, list, list
+        """
+        augmented_users = random.sample(users, int(len(users) * aug_sample_rate))
+        positive_items = [self.augmented_interactions[str(user)][0] for user in augmented_users if (
+                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][1] < self.n_items)]
+
+        neg_items_aug = [self.augmented_interactions[str(user)][1] for user in augmented_users if (
+                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][1] < self.n_items)]
+
+        users_aug = [user for user in augmented_users if (
+                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][1] < self.n_items)]
+        return users_aug, positive_items, neg_items_aug
 
     def describe(self):
         """
