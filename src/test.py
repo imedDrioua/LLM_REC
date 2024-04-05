@@ -1,4 +1,4 @@
-import src.metrics as metrics
+from src import metrics as metrics
 import multiprocessing
 import heapq
 import torch
@@ -11,6 +11,19 @@ Ks = [10, 20, 50]
 
 
 def get_performance(r, auc, user_pos_test, Ks):
+    """
+    Get the performance of the model
+    :param r:  model relevant items
+    :type r: list
+    :param auc:  area under the curve
+    :type auc: float
+    :param user_pos_test:  user positive items in the test set
+    :type user_pos_test: list
+    :param Ks:  list of Ks
+    :type Ks: list
+    :return:  metrics values
+    :rtype: dict
+    """
     precision, recall, ndcg, hit_ratio = [], [], [], []
 
     for K in Ks:
@@ -24,6 +37,17 @@ def get_performance(r, auc, user_pos_test, Ks):
 
 
 def rank_list_by_heapq(rating, user_pos_test, test_items):
+    """
+    Rank the list by heapq
+    :param rating:  model predicted ratings
+    :type rating: dict
+    :param user_pos_test:  user positive items in the test set
+    :type user_pos_test: list
+    :param test_items:  test items
+    :type rating: dict
+    :return:  r, auc
+    :rtype: list, float
+    """
     item_score = {}
     for i in test_items:
         item_score[i] = rating[i]
@@ -42,6 +66,16 @@ def rank_list_by_heapq(rating, user_pos_test, test_items):
 
 
 def rank_list_by_sorted(rating, user_pos_test, test_items):
+    """
+    Rank the list by sorted
+    :param rating:  model predicted ratings
+    :type rating: dict
+    :param user_pos_test:  user positive items in the test set
+    :type user_pos_test: list
+    :param test_items:  test items
+    :type test_items: list
+    :return:  r, auc
+    """
     item_score = {}
     for i in test_items:
         item_score[i] = rating[i]
@@ -60,6 +94,15 @@ def rank_list_by_sorted(rating, user_pos_test, test_items):
 
 
 def get_auc(item_score, user_pos_test):
+    """
+    Get the area under the curve
+    :param item_score:  items scores
+    :type item_score: dict
+    :param user_pos_test:  user positive items in the test set
+    :type user_pos_test: list
+    :return:  auc
+    :rtype: float
+    """
     item_score = sorted(item_score.items(), key=lambda kv: kv[1])
     item_score.reverse()
     item_sort = [x[0] for x in item_score]
@@ -85,6 +128,14 @@ class Tester:
         self.test_items = None
 
     def test_one_user(self, x, test_flag='part'):
+        """
+        Test the performance of the model for one user
+
+        :param x:  list, user u's ratings for user u
+        :param test_flag:  str, test flag
+        :return:  performance: dict
+        :rtype: dict
+        """
         # user u's ratings for user u
         is_val = x[-1]
         rating = x[0]
@@ -114,7 +165,21 @@ class Tester:
         return get_performance(r, auc, user_pos_test, Ks)
 
     def test(self, ua_embeddings, ia_embeddings, batch_size, is_val, batch_test_flag=False):
-
+        """
+        Test the performance of the model
+        :param ua_embeddings:  user embeddings
+        :type ua_embeddings: torch.Tensor
+        :param ia_embeddings:  item embeddings
+        :type ia_embeddings: torch.Tensor
+        :param batch_size:  batch size
+        :type batch_size: int
+        :param is_val:  bool, validation flag
+        :type is_val: bool
+        :param batch_test_flag:  bool, batch test flag
+        :type batch_test_flag: bool
+        :return:  result of the model performance
+        :rtype: dict
+        """
         result = {'precision': np.zeros(len(Ks)), 'recall': np.zeros(len(Ks)), 'ndcg': np.zeros(len(Ks)),
                   'hit_ratio': np.zeros(len(Ks)), 'auc': 0.}
 
@@ -151,21 +216,4 @@ class Tester:
         pool.close()
         return result
 
-    def vectoriel_test(self, ua_embeddings, ia_embeddings):
-        result = {'precision': np.zeros(len(Ks)), 'recall': np.zeros(len(Ks)), 'ndcg': np.zeros(len(Ks)),
-                  'hit_ratio': np.zeros(len(Ks)), 'auc': 0.}
-        user_batch = self.test_users_keys
-        item_batch = range(self.ITEM_NUM)
-        u_g_embeddings = ua_embeddings[user_batch]
-        i_g_embeddings = ia_embeddings[item_batch]
-        rate_batch = torch.matmul(u_g_embeddings, torch.transpose(i_g_embeddings, 0, 1))
-        rate_batch = rate_batch.detach().cpu().numpy()
-        user_batch_rating_uid = zip(rate_batch, user_batch, [False] * len(user_batch))
-        batch_result = list(map(self.test_one_user, user_batch_rating_uid))
-        for re in batch_result:
-            result['precision'] += re['precision'] / len(user_batch)
-            result['recall'] += re['recall'] / len(user_batch)
-            result['ndcg'] += re['ndcg'] / len(user_batch)
-            result['hit_ratio'] += re['hit_ratio'] / len(user_batch)
-            result['auc'] += re['auc'] / len(user_batch)
-        return result
+

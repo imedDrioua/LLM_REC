@@ -1,5 +1,4 @@
 # this script defines the training process of the model
-
 from time import time
 import torch
 import torch.nn as nn
@@ -25,6 +24,13 @@ class Trainer:
         return feat_emb_loss
 
     def train(self, epochs, batch_size=1024):
+        """
+        Train the model
+        :param epochs:  number of epochs
+        :param batch_size:  batch size
+        :return:  None
+        :rtype: None
+        """
         n_batch = self.dataset.n_users // batch_size + 1
 
         for epoch in range(epochs):
@@ -96,6 +102,12 @@ class Trainer:
             print(f'Epoch {epoch} Loss {loss / n_batch} Time {time() - start}')
 
     def evaluate(self, test_users):
+        """
+        Evaluate the model on the test set
+        :param test_users:  dict, test users
+        :return:  evaluation results
+        :rtype: dict
+        """
         self.model.eval()
         with torch.no_grad():
             user_embeddings, item_embeddings, _, _, _, _, _, _, _, _ = self.model.propagate()

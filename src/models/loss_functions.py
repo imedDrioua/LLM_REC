@@ -3,26 +3,22 @@
 import torch
 import numpy as np
 import torch.nn.functional as f
-from ..parser import parse_args
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def bpr_loss(users, users_emb, pos_emb, neg_emb, userEmb0, posEmb0, negEmb0):
-    reg_loss = (1 / 2) * (userEmb0.norm().pow(2) +
-                          posEmb0.norm().pow(2) +
-                          negEmb0.norm().pow(2)) / float(len(users))
-    pos_scores = torch.mul(users_emb, pos_emb)
-    pos_scores = torch.sum(pos_scores, dim=1)
-    neg_scores = torch.mul(users_emb, neg_emb)
-    neg_scores = torch.sum(neg_scores, dim=1)
-
-    loss = torch.mean(torch.nn.functional.softplus(neg_scores - pos_scores))
-
-    return loss, reg_loss
-
-
-def bpr_loss_aug(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71, decay=1e-5):
+def bpr_loss(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0.71, decay=1e-5):
+    """
+    Bayesian Personalized Ranking (BPR) loss function
+    :param users:  user embeddings
+    :param pos_items:  positive item embeddings
+    :param neg_items:  negative item embeddings
+    :param batch_size:      batch size
+    :param prune_loss_drop_rate:  drop rate for pruning
+    :param decay:  decay rate
+    :return:  mf_loss, emb_loss, reg_loss
+    :rtype: float, float, float
+    """
     pos_scores = torch.sum(torch.mul(users, pos_items), dim=1)
     neg_scores = torch.sum(torch.mul(users, neg_items), dim=1)
 
@@ -39,6 +35,13 @@ def bpr_loss_aug(users, pos_items, neg_items, batch_size, prune_loss_drop_rate=0
 
 
 def prune_loss(prediction, drop_rate):
+    """
+    Prune the loss
+    :param prediction:  prediction
+    :param drop_rate:    drop rate
+    :return:  loss_update
+    :rtype: float
+    """
     if device == torch.device("cuda"):
         ind_sorted = np.argsort(prediction.cpu().data).cuda()
     else:

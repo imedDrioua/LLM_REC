@@ -65,7 +65,12 @@ class MmModel(nn.Module):
         self.item_user_interactions = self.user_item_interactions.t().to(device)
 
     def propagate(self):
-        # get the embeddings of the users and items
+        """
+        Propagate the embeddings of the users and items
+        :return:  user_embeddings, item_embeddings
+        :rtype: torch.Tensor, torch.Tensor
+        """
+         # get the embeddings of the users and items
         all_embeddings = [self.E0.weight]
         # all_image_embeddings = [self.image_feat.weight.t()]
         # all_text_embeddings = [self.text_feat.weight.t()]
@@ -167,6 +172,11 @@ class MmModel(nn.Module):
         return results
 
     def create_adjacency_matrix(self, train_df):
+        """
+        Create the adjacency matrix from the user-item interactions
+        :param train_df:  training data frame containing the user-item interactions data frame
+        :return:  None
+        """
         # check if the user_item_matrix is already created
         R = sp.dok_matrix((self.n_users, self.n_items), dtype=np.float32)
         R[train_df['user_id'], train_df['item_id']] = 1.0
