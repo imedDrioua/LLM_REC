@@ -75,19 +75,47 @@
 <span></span><span class="c1"># this script defines the training process of the model</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">src.models.loss_functions</span> <span class="kn">import</span> <span class="n">bpr_loss</span>
+<span class="kn">from</span> <span class="nn">src.models.loss_functions</span> <span class="kn">import</span> <span class="n">bpr_loss_aug</span>
 <span class="kn">from</span> <span class="nn">src.test</span> <span class="kn">import</span> <span class="n">Tester</span>
 
 
 <div class="viewcode-block" id="Trainer">
 <a class="viewcode-back" href="../API/train.html#train.Trainer">[docs]</a>
 <span class="k">class</span> <span class="nc">Trainer</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">side_info_rate</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">augmentation_rate</span><span class="o">=</span><span class="mf">0.012</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tester</span> <span class="o">=</span> <span class="n">Tester</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">side_info_rate</span> <span class="o">=</span> <span class="n">side_info_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">augmentation_rate</span> <span class="o">=</span> <span class="n">augmentation_rate</span>
+
+<div class="viewcode-block" id="Trainer.feat_reg_loss_calculation">
+<a class="viewcode-back" href="../API/train.html#train.Trainer.feat_reg_loss_calculation">[docs]</a>
+    <span class="k">def</span> <span class="nf">feat_reg_loss_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g_item_image</span><span class="p">,</span> <span class="n">g_item_text</span><span class="p">,</span> <span class="n">g_user_image</span><span class="p">,</span> <span class="n">g_user_text</span><span class="p">,</span> <span class="n">feat_reg_decay</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the feature regularization loss</span>
+<span class="sd">        :param g_item_image:  item image embeddings</span>
+<span class="sd">        :type g_item_image: torch.Tensor</span>
+<span class="sd">        :param g_item_text:  item text embeddings</span>
+<span class="sd">        :type g_item_text: torch.Tensor</span>
+<span class="sd">        :param g_user_image:  user image embeddings</span>
+<span class="sd">        :type g_user_image: torch.Tensor</span>
+<span class="sd">        :param g_user_text:  user text embeddings</span>
+<span class="sd">        :type g_user_text: torch.Tensor</span>
+<span class="sd">        :param feat_reg_decay:  feature regularization decay</span>
+<span class="sd">        :type feat_reg_decay: float</span>
+<span class="sd">        :return:  feature regularization loss</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">feat_reg</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">g_item_image</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">g_item_text</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> \
+                   <span class="o">+</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">g_user_image</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">g_user_text</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">feat_reg</span> <span class="o">=</span> <span class="n">feat_reg</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">n_items</span>
+        <span class="n">feat_emb_loss</span> <span class="o">=</span> <span class="n">feat_reg_decay</span> <span class="o">*</span> <span class="n">feat_reg</span>
+        <span class="k">return</span> <span class="n">feat_emb_loss</span></div>
+
 
 <div class="viewcode-block" id="Trainer.train">
 <a class="viewcode-back" href="../API/train.html#train.Trainer.train">[docs]</a>
@@ -107,15 +135,63 @@
             <span class="n">loss</span> <span class="o">=</span> <span class="mf">0.</span>
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_batch</span><span class="p">)):</span>
                 <span class="n">users</span><span class="p">,</span> <span class="n">pos_items</span><span class="p">,</span> <span class="n">neg_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-                <span class="n">user_embeddings</span><span class="p">,</span> <span class="n">pos_item_embeddings</span><span class="p">,</span> <span class="n">neg_item_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">pos_items</span><span class="p">,</span> <span class="n">neg_items</span><span class="p">)</span>
-                <span class="n">mf_loss</span><span class="p">,</span> <span class="n">emb_loss</span><span class="p">,</span> <span class="n">reg_loss</span> <span class="o">=</span> <span class="n">bpr_loss</span><span class="p">(</span><span class="n">user_embeddings</span><span class="p">,</span> <span class="n">pos_item_embeddings</span><span class="p">,</span> <span class="n">neg_item_embeddings</span><span class="p">,</span>
-                                                       <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
-                <span class="n">total_loss</span> <span class="o">=</span> <span class="n">mf_loss</span> <span class="o">+</span> <span class="n">emb_loss</span> <span class="o">+</span> <span class="n">reg_loss</span>
+                <span class="n">embeddings_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+                    <span class="n">users</span><span class="p">,</span> <span class="n">pos_items</span><span class="p">,</span> <span class="n">neg_items</span><span class="p">)</span>
+                <span class="c1"># embeddings loss</span>
+                <span class="n">mf_loss</span><span class="p">,</span> <span class="n">emb_loss</span><span class="p">,</span> <span class="n">reg_loss</span> <span class="o">=</span> <span class="n">bpr_loss_aug</span><span class="p">(</span><span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;embeddings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                                           <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;embeddings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                                                           <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;embeddings&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+                <span class="n">embeddings_loss</span> <span class="o">=</span> <span class="n">mf_loss</span> <span class="o">+</span> <span class="n">reg_loss</span> <span class="o">+</span> <span class="n">emb_loss</span>
+
+                <span class="c1"># image embeddings loss</span>
+                <span class="n">image_mf_loss</span><span class="p">,</span> <span class="n">image_emb_loss</span><span class="p">,</span> <span class="n">image_reg_loss</span> <span class="o">=</span> <span class="n">bpr_loss_aug</span><span class="p">(</span><span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;image_embeddings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                                                             <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;image_embeddings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                                                                             <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;image_embeddings&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                                                                             <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+                <span class="n">image_embeddings_loss</span> <span class="o">=</span> <span class="n">image_mf_loss</span> <span class="o">+</span> <span class="n">image_emb_loss</span>
+
+                <span class="c1"># text embeddings loss</span>
+                <span class="n">text_mf_loss</span><span class="p">,</span> <span class="n">text_emb_loss</span><span class="p">,</span> <span class="n">text_reg_loss</span> <span class="o">=</span> <span class="n">bpr_loss_aug</span><span class="p">(</span><span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;text_embeddings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                                                          <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;text_embeddings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                                                                          <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;text_embeddings&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+                <span class="n">text_embeddings_loss</span> <span class="o">=</span> <span class="n">text_mf_loss</span> <span class="o">+</span> <span class="n">text_emb_loss</span>
+                <span class="c1"># side info loss</span>
+                <span class="n">side_info_loss</span> <span class="o">=</span> <span class="n">image_embeddings_loss</span> <span class="o">+</span> <span class="n">text_embeddings_loss</span>
+
+                <span class="c1"># feature regularization loss</span>
+                <span class="n">side_info_reg_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_reg_loss_calculation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item_image_embeddings</span><span class="p">,</span>
+                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item_text_embeddings</span><span class="p">,</span>
+                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">user_image_embeddings</span><span class="p">,</span>
+                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">user_text_embeddings</span><span class="p">)</span>
+
+                <span class="c1"># user profile loss</span>
+                <span class="n">user_profile_mf_loss</span><span class="p">,</span> <span class="n">user_profile_emb_loss</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">bpr_loss_aug</span><span class="p">(</span><span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;profile_embeddings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                                                              <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;profile_embeddings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                                                                              <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;profile_embeddings&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                                                                              <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+                <span class="n">user_profile_loss</span> <span class="o">=</span> <span class="n">user_profile_mf_loss</span> <span class="o">+</span> <span class="n">user_profile_emb_loss</span>
+
+                <span class="c1"># item attributes loss</span>
+                <span class="n">item_attr_mf_loss</span><span class="p">,</span> <span class="n">item_attr_emb_loss</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">bpr_loss_aug</span><span class="p">(</span><span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;attributes_embeddings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                                                        <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;attributes_embeddings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                                                                        <span class="n">embeddings_dict</span><span class="p">[</span><span class="s2">&quot;attributes_embeddings&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                                                                        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+                <span class="n">item_attr_loss</span> <span class="o">=</span> <span class="n">item_attr_mf_loss</span> <span class="o">+</span> <span class="n">item_attr_emb_loss</span>
+                <span class="n">augmentation_loss</span> <span class="o">=</span> <span class="n">user_profile_loss</span> <span class="o">+</span> <span class="n">item_attr_loss</span>
+
+                <span class="c1"># total loss</span>
+                <span class="n">total_loss</span> <span class="o">=</span> <span class="n">embeddings_loss</span> <span class="o">+</span> <span class="n">side_info_loss</span> <span class="o">+</span> <span class="n">augmentation_loss</span> <span class="o">+</span> <span class="n">side_info_reg_loss</span>
+
                 <span class="n">total_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+                                         <span class="n">max_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
                 <span class="n">loss</span> <span class="o">+=</span> <span class="n">total_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-
+            <span class="k">del</span> <span class="n">embeddings_dict</span>
             <span class="n">test_users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_dataset</span><span class="p">(</span><span class="s1">&#39;test_dict&#39;</span><span class="p">)</span>
             <span class="n">evaluation_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_users</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">evaluation_results</span><span class="p">)</span>
@@ -133,12 +209,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-            <span class="n">user_embeddings</span><span class="p">,</span> <span class="n">item_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">propagate</span><span class="p">()</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tester</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">user_embeddings</span><span class="p">,</span> <span class="n">item_embeddings</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">test_users</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">user_embeddings</span><span class="p">,</span> <span class="n">item_embeddings</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">propagate</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tester</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">user_embeddings</span><span class="p">,</span> <span class="n">item_embeddings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                    <span class="kc">False</span><span class="p">,</span>
                                     <span class="kc">False</span><span class="p">)</span></div>
 </div>
-
-
 
 </pre></div>
 

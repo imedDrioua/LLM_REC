@@ -52,6 +52,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">train module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#train.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#train.Trainer.evaluate"><code class="docutils literal notranslate"><span class="pre">Trainer.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#train.Trainer.feat_reg_loss_calculation"><code class="docutils literal notranslate"><span class="pre">Trainer.feat_reg_loss_calculation()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#train.Trainer.train"><code class="docutils literal notranslate"><span class="pre">Trainer.train()</span></code></a></li>
 </ul>
 </li>
@@ -91,7 +92,7 @@
 <span id="train-module"></span><h1>train module<a class="headerlink" href="#module-train" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="train.Trainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side_info_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augmentation_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.012</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer" title="Link to this definition"></a></dt>
 <dd><p>Bases : <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="train.Trainer.evaluate">
@@ -100,6 +101,24 @@
 :param test_users:  dict, test users
 :return:  evaluation results
 :rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="train.Trainer.feat_reg_loss_calculation">
+<span class="sig-name descname"><span class="pre">feat_reg_loss_calculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g_item_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_item_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_user_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g_user_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feat_reg_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/train.html#Trainer.feat_reg_loss_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#train.Trainer.feat_reg_loss_calculation" title="Link to this definition"></a></dt>
+<dd><p>Calculate the feature regularization loss
+:param g_item_image:  item image embeddings
+:type g_item_image: torch.Tensor
+:param g_item_text:  item text embeddings
+:type g_item_text: torch.Tensor
+:param g_user_image:  user image embeddings
+:type g_user_image: torch.Tensor
+:param g_user_text:  user text embeddings
+:type g_user_text: torch.Tensor
+:param feat_reg_decay:  feature regularization decay
+:type feat_reg_decay: float
+:return:  feature regularization loss
+:rtype: float</p>
 </dd></dl>
 
 <dl class="py method">
