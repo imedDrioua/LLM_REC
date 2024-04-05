@@ -5,7 +5,7 @@ import multiprocessing
 import torch
 import numpy as np
 from tqdm import tqdm
-from metrics import get_performance, rank_list_by_heapq, rank_list_by_sorted
+from src.metrics import get_performance, rank_list_by_heapq, rank_list_by_sorted
 
 
 class Tester:
