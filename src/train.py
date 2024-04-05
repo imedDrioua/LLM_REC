@@ -80,8 +80,9 @@ class Trainer:
                                                                         self.dataset.batch_size)
                 item_attr_loss = item_attr_mf_loss + item_attr_emb_loss
                 augmentation_loss = user_profile_loss + item_attr_loss
+
                 # total loss
-                total_loss = embeddings_loss + side_info_loss * self.side_info_rate + self.augmentation_rate * augmentation_loss + side_info_reg_loss
+                total_loss = embeddings_loss + side_info_loss + augmentation_loss + side_info_reg_loss
 
                 total_loss.backward()
                 nn.utils.clip_grad_norm_(self.model.parameters(),

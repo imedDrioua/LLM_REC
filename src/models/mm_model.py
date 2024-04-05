@@ -82,7 +82,7 @@ class MmModel(nn.Module):
             e_layer_weight = torch.sparse.mm(self.user_item_matrix, e_layer_weight)
             all_embeddings.append(e_layer_weight)
 
-        # calculate the embeddings for side information
+        # calculate embeddings for side information and augmented data
         for _ in range(1):
             user_image_feature = torch.sparse.mm(self.user_item_interactions, image_layer_weight)
             item_image_feature = torch.sparse.mm(self.item_user_interactions, user_image_feature)
