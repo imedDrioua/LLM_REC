@@ -104,7 +104,11 @@ class Tester:
                 result['ndcg'] += re['ndcg'] / n_test_users
                 result['hit_ratio'] += re['hit_ratio'] / n_test_users
                 result['auc'] += re['auc'] / n_test_users
+        # create a strcuterd string for logging from each key : value pair in the result dictionary
+        result_str = ""
+        for key in result.keys():
+            result_str += key + ": " + str(result[key]) + " "
 
         assert count == n_test_users
         pool.close()
-        return result
+        return result, result_str

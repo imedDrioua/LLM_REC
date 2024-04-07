@@ -37,15 +37,15 @@ class MmModel(nn.Module):
 
         # Side information layers
         self.text_feat = nn.Linear(image_embeddings_data.shape[1], self.embed_size)
-        self.text_feat_dropout = nn.Dropout(0.2)
+        self.text_feat_dropout = nn.Dropout(0.1)
         self.image_feat = nn.Linear(text_embeddings_data.shape[1], self.embed_size)
-        self.image_feat_dropout = nn.Dropout(0.2)
+        self.image_feat_dropout = nn.Dropout(0.1)
 
         # augmented feature linear layers and dropout
         self.user_profiles = nn.Linear(user_profiles_data.shape[1], self.embed_size)
-        self.user_profiles_dropout = nn.Dropout(0.2)
+        self.user_profiles_dropout = nn.Dropout(0.1)
         self.book_attributes = nn.Linear(book_attributes_data.shape[1], self.embed_size)
-        self.book_attributes_dropout = nn.Dropout(0.2)
+        self.book_attributes_dropout = nn.Dropout(0.1)
 
         # weight initialization with xavier uniform
         init.xavier_uniform_(self.E0.weight)
@@ -115,6 +115,8 @@ class MmModel(nn.Module):
         return user_embeddings, item_embeddings, user_image_feature, item_image_feature, user_text_feature, item_text_feature, user_attributes, item_attributes, user_profile_feat, item_profile_feat
 
     def forward(self, user_indices, pos_item_indices, neg_item_indices):
+
+
         user_embeddings, item_embeddings, user_image_embeddings, item_image_embeddings, user_text_embeddings, item_text_embeddings, user_attributes_embeddings, item_attributes_embeddings, user_profile_feat_embd, item_profile_feat_embed = self.propagate()
 
         # side information incorporation

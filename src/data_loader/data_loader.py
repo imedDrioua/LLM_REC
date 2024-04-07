@@ -9,6 +9,7 @@ class BooksDataset:
 
     def __init__(self, data_dir, batch_size=1024):
         self.data_dir = data_dir
+        self.name = "Books Dataset"
         # self.train_matrix = pd.read_csv(f'{data_dir}/train_df.csv').values
         self.images = np.load(f'{data_dir}/embed_image.npy')
         self.text = np.load(f'{data_dir}/embed_text.npy')
