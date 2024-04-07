@@ -20,7 +20,8 @@
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Data Loader" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,12 +44,26 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="train.html">Train class module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test.html">Test class module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LLM_augmentation.html">LLM augmentations</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Data Loader</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Data loader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.BooksDataset"><code class="docutils literal notranslate"><span class="pre">BooksDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#data_loader.BooksDataset.describe"><code class="docutils literal notranslate"><span class="pre">BooksDataset.describe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data_loader.BooksDataset.get_all_datasets"><code class="docutils literal notranslate"><span class="pre">BooksDataset.get_all_datasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data_loader.BooksDataset.get_dataset"><code class="docutils literal notranslate"><span class="pre">BooksDataset.get_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data_loader.BooksDataset.sample"><code class="docutils literal notranslate"><span class="pre">BooksDataset.sample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data_loader.BooksDataset.sample_augmented_interactions"><code class="docutils literal notranslate"><span class="pre">BooksDataset.sample_augmented_interactions()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -65,6 +80,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">Data Loader</a></li>
       <li class="breadcrumb-item active">Data loader module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/API/data_loader.rst.txt" rel="nofollow"> View page source</a>
@@ -157,6 +173,26 @@ and describe the datasets.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.BooksDataset.sample_augmented_interactions">
+<span class="sig-name descname"><span class="pre">sample_augmented_interactions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">users</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aug_sample_rate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.BooksDataset.sample_augmented_interactions" title="Link to this definition"></a></dt>
+<dd><p>Sample users from the augmented interactions, and return the users, positive and negative books</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>users</strong> (<em>list</em>) – list of users for whom the augmented interactions will be sampled</p></li>
+<li><p><strong>aug_sample_rate</strong> (<em>float</em>) – the rate of users to sample</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>users list, positive books list, negative books list</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, list, list</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -164,7 +200,9 @@ and describe the datasets.</p>
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="Data Loader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

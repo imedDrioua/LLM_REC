@@ -48,6 +48,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Train class module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#train.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#train.Trainer.calculate_all_losses"><code class="docutils literal notranslate"><span class="pre">Trainer.calculate_all_losses()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#train.Trainer.evaluate"><code class="docutils literal notranslate"><span class="pre">Trainer.evaluate()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#train.Trainer.feat_reg_loss_calculation"><code class="docutils literal notranslate"><span class="pre">Trainer.feat_reg_loss_calculation()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#train.Trainer.train"><code class="docutils literal notranslate"><span class="pre">Trainer.train()</span></code></a></li>
@@ -59,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="LLM_augmentation.html">LLM augmentations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Data Loader</a></li>
 </ul>
 
         </div>
@@ -90,8 +92,25 @@
 <p>Script that defines the Trainer class which is used to train the model on the training set</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="train.Trainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side_info_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augmentation_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.012</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side_info_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augmentation_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.012</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aug_sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="train.Trainer.calculate_all_losses">
+<span class="sig-name descname"><span class="pre">calculate_all_losses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer.calculate_all_losses" title="Link to this definition"></a></dt>
+<dd><p>Calculate all the losses</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>embedding_dict</strong> (<em>dict</em>) – dict of all embeddings returned by the model</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary mapping loss names to loss values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="train.Trainer.evaluate">
 <span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_users</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#train.Trainer.evaluate" title="Link to this definition"></a></dt>
