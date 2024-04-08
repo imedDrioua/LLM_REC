@@ -134,14 +134,18 @@ class BooksDataset:
         # get the shape of all the datasets (dictionaries need special handling)
         shape = {k: v.shape if isinstance(v, np.ndarray) else len(v) for k, v in self.datasets.items()}
         # get the number of interactions in the train matrix
-        n_interactions = np.count_nonzero(self.train_matrix)
+        n_interactions = self.interactions._nnz()
         # get the sparsity of the train matrix (number of missing interactions / total interactions)
-        sparsity = 1 - n_interactions / (self.train_matrix.shape[0] * self.train_matrix.shape[1])
+        sparsity = 1 - n_interactions / (self.interactions.shape[0] * self.interactions.shape[1])
         # print the results as two columns
-        print(f"{'Dataset':<20}{'Shape':<20}")
-        print('-' * 40)
+        string = f"\n{'Dataset':<20}{'Shape':<20} \n"
+        string += '-' * 40 + '\n'
         for k, v in shape.items():
-            print(f"{k:<20}{v}")
+            string += f"{k:<20}{v}" + '\n'
 
-        print(f"\nNumber of interactions: {n_interactions}")
-        print(f"Sparsity: {sparsity:.2%}")
+        string += f"\nNumber of interactions: {n_interactions}" + '\n'
+        string += f"Sparsity: {sparsity:.2%}" + '\n'
+        # convert the print statement to a return string
+        return string
+
+

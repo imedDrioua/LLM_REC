@@ -19,9 +19,12 @@ if __name__ == "__main__":
                     user_profiles_data=dataset.get_dataset("user_profiles"),
                     book_attributes_data=dataset.get_dataset("books_attributes"))
     model.to(device)
+
     # load the trainer
     trainer = Trainer(model=model, dataset=dataset, lr=0.005)
+
     # train the model
     trainer.train(epochs=2, batch_size=1024)
+
     # save the model
-    torch.save(model.state_dict(), '../model/model.pth')
+    torch.save(model.state_dict(), './model/model.pth')

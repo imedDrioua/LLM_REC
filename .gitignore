@@ -1,4 +1,5 @@
 /data
 /llmrec_ppd
+/logs
 .idea
 secret.py

@@ -26,6 +26,7 @@ class Trainer:
         self.task_name = "%s_%s" % (datetime.now().strftime('%Y-%m-%d %H-%M-%S'), self.dataset.name)
         self.logger = Logger(filename=self.task_name, is_debug=False)
         self.logger.logging("PID: %d" % os.getpid())
+        self.logger.logging(self.dataset.describe())
 
     def feat_reg_loss_calculation(self, g_item_image, g_item_text, g_user_image, g_user_text, feat_reg_decay=1e-5):
         """
@@ -95,8 +96,9 @@ class Trainer:
             del embeddings_dict
             test_users = self.dataset.get_dataset('test_dict')
             evaluation_results, results_string = self.evaluate(test_users)
-            self.logger.logging(results_string)
             self.logger.logging(f'Epoch {epoch} Loss {loss / n_batch} Time {time() - start}')
+            self.logger.logging(results_string)
+
 
     def evaluate(self, test_users):
         """
