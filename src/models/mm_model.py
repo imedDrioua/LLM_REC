@@ -36,9 +36,9 @@ class MmModel(nn.Module):
         self.E0 = nn.Embedding(self.n_users + self.n_items, self.embed_size)
 
         # Side information layers
-        self.text_feat = nn.Linear(image_embeddings_data.shape[1], self.embed_size)
+        self.image_feat = nn.Linear(image_embeddings_data.shape[1], self.embed_size)
         self.text_feat_dropout = nn.Dropout(0.1)
-        self.image_feat = nn.Linear(text_embeddings_data.shape[1], self.embed_size)
+        self.text_feat = nn.Linear(text_embeddings_data.shape[1], self.embed_size)
         self.image_feat_dropout = nn.Dropout(0.1)
 
         # augmented feature linear layers and dropout
@@ -80,8 +80,8 @@ class MmModel(nn.Module):
         user_attributes, item_attributes, user_profile_feat, item_profile_feat = None, None, None, None
 
         e_layer_weight = self.E0.weight
-        image_layer_weight = self.text_feat_dropout(self.image_feat(self.image_embeddings_data))
-        text_layer_weight = self.image_feat_dropout(self.text_feat(self.text_embeddings_data))
+        image_layer_weight = self.image_feat_dropout(self.image_feat(self.image_embeddings_data))
+        text_layer_weight = self.text_feat_dropout(self.text_feat(self.text_embeddings_data))
         user_profiles_weight = self.user_profiles_dropout(self.user_profiles(self.user_profiles_data))
         items_attributes_weight = self.book_attributes_dropout(self.book_attributes(self.book_attributes_data))
 
@@ -111,6 +111,7 @@ class MmModel(nn.Module):
 
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
+
 
         return user_embeddings, item_embeddings, user_image_feature, item_image_feature, user_text_feature, item_text_feature, user_attributes, item_attributes, user_profile_feat, item_profile_feat
 

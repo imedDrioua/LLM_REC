@@ -9,12 +9,12 @@ class BooksDataset:
 
     def __init__(self, data_dir, batch_size=1024):
         self.data_dir = data_dir
-        self.name = "Books Dataset"
+        self.name = "Netflix Dataset"
         # self.train_matrix = pd.read_csv(f'{data_dir}/train_df.csv').values
         self.images = np.load(f'{data_dir}/embed_image.npy')
         self.text = np.load(f'{data_dir}/embed_text.npy')
         self.user_profiles = np.load(f'{data_dir}/users_profiles_embeddings.npy')
-        self.books_attributes = np.load(f'{data_dir}/books_attributes_embeddings.npy')
+        self.books_attributes = np.load(f'{data_dir}/films_attributes_embeddings.npy')
         self.interactions = torch.load(f'{data_dir}/train_matrix.pt')
         # check if the adjacency matrix exists, if not, it will be created with the model
         self.adjacency_matrix = None

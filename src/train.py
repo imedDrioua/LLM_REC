@@ -85,8 +85,8 @@ class Trainer:
                 loss_dict = self.calculate_all_losses(embeddings_dict)
 
                 # total loss
-                total_loss = loss_dict["embeddings_loss"] + loss_dict["side_info_loss"] + loss_dict[
-                    "augmentation_loss"] + loss_dict["side_info_reg_loss"]
+                total_loss = loss_dict["embeddings_loss"] + self.side_info_rate * loss_dict["side_info_loss"] + loss_dict[
+                    "augmentation_loss"] * self.augmentation_rate + loss_dict["side_info_reg_loss"]
 
                 total_loss.backward(retain_graph=False)
                 nn.utils.clip_grad_norm_(self.model.parameters(),
