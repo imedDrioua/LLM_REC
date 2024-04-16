@@ -1,8 +1,40 @@
 import numpy as np
 import os
+
+import scipy as sp
 import torch
 import json
 import random
+import pandas as pd
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def matrix_to_tensor(cur_matrix):
+    if type(cur_matrix) != sp.coo_matrix:
+        cur_matrix = cur_matrix.tocoo()  #
+    indices = torch.from_numpy(np.vstack((cur_matrix.row, cur_matrix.col)).astype(np.int64))  #
+    values = torch.from_numpy(cur_matrix.data)  #
+    shape = torch.Size(cur_matrix.shape)
+    if device == torch.device("cuda"):
+        return torch.sparse_coo_tensor(indices, values, shape).to(torch.float32).cuda()  #
+    else:
+        return torch.sparse_coo_tensor(indices, values, shape).to(torch.float32).cpu()
+
+
+def csr_norm(csr_mat, mean_flag=False):
+    rowsum = np.array(csr_mat.sum(1))
+    rowsum = np.power(rowsum + 1e-8, -0.5).flatten()
+    rowsum[np.isinf(rowsum)] = 0.
+    rowsum_diag = sp.diags(rowsum)
+    colsum = np.array(csr_mat.sum(0))
+    colsum = np.power(colsum + 1e-8, -0.5).flatten()
+    colsum[np.isinf(colsum)] = 0.
+    colsum_diag = sp.diags(colsum)
+
+    if not mean_flag:
+        return rowsum_diag * csr_mat * colsum_diag
+    else:
+        return rowsum_diag * csr_mat
 
 
 class BooksDataset:
@@ -15,7 +47,12 @@ class BooksDataset:
         self.text = np.load(f'{data_dir}/embed_text.npy')
         self.user_profiles = np.load(f'{data_dir}/users_profiles_embeddings.npy')
         self.books_attributes = np.load(f'{data_dir}/films_attributes_embeddings.npy')
-        self.interactions = torch.load(f'{data_dir}/train_matrix.pt')
+        self.interactions = pd.read_pickle(f'{data_dir}/train_mat')
+        self.interactions_T = self.interactions.T
+        self.interactions = csr_norm(self.interactions)
+        self.interactions = matrix_to_tensor(self.interactions)
+        self.interactions_T = csr_norm(self.interactions_T)
+        self.interactions_T = matrix_to_tensor(self.interactions_T)
         # check if the adjacency matrix exists, if not, it will be created with the model
         self.adjacency_matrix = None
         if os.path.exists(f'{data_dir}/adjacency_matrix.pt'):
@@ -27,11 +64,21 @@ class BooksDataset:
             self.train_dict = json.load(f)
         with open(f'{data_dir}/test.json', 'r') as f:
             self.test_dict = json.load(f)
+        test_set = {}
+        for uid, test_items in self.test_dict.items():
+            if len(test_items) == 0:
+                continue
+            try:
+                test_set[uid] = test_items
+            except:
+                continue
+        self.test_dict = test_set
         with open(f'{data_dir}/validation.json', 'r') as f:
             self.val_dict = json.load(f)
         with open(f'{data_dir}/augmented_interactions_dict.json', 'r') as f:
             self.augmented_interactions = json.load(f)
-
+        # n_train est le nombre d'items dans le train set
+        self.n_train = sum([len(v) for v in self.train_dict.values()])
         # create a dict to map each dataset name to its corresponding data
         self.datasets = {
             # 'train_matrix': self.train_matrix,
@@ -43,7 +90,8 @@ class BooksDataset:
             'test_dict': self.test_dict,
             'val_dict': self.val_dict,
             'adjacency_matrix': self.adjacency_matrix,
-            'interactions': self.interactions
+            'interactions': self.interactions,
+            'interactions_T': self.interactions_T
         }
         self.n_users, self.n_items = len(self.train_dict), len(self.books_attributes)
 
@@ -115,13 +163,16 @@ class BooksDataset:
         """
         augmented_users = random.sample(users, int(len(users) * aug_sample_rate))
         positive_items = [self.augmented_interactions[str(user)][0] for user in augmented_users if (
-                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][1] < self.n_items)]
+                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][
+            1] < self.n_items)]
 
         neg_items_aug = [self.augmented_interactions[str(user)][1] for user in augmented_users if (
-                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][1] < self.n_items)]
+                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][
+            1] < self.n_items)]
 
         users_aug = [user for user in augmented_users if (
-                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][1] < self.n_items)]
+                self.augmented_interactions[str(user)][0] < self.n_items and self.augmented_interactions[str(user)][
+            1] < self.n_items)]
         return users_aug, positive_items, neg_items_aug
 
     def describe(self):
@@ -147,5 +198,3 @@ class BooksDataset:
         string += f"Sparsity: {sparsity:.2%}" + '\n'
         # convert the print statement to a return string
         return string
-
-

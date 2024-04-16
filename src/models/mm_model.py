@@ -13,15 +13,18 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class MmModel(nn.Module):
-    def __init__(self, n_users, n_items, embed_size, adjacency_matrix, interactions, image_embeddings_data,
+    def __init__(self, n_users, n_items, embed_size, adjacency_matrix, interactions, interactions_t,
+                 image_embeddings_data,
                  text_embeddings_data, book_attributes_data, user_profiles_data,
-                 n_layers, model_cat_rate=0.02, train_df=None,
+                 n_layers, model_cat_rate=0.02, user_cat_rate=2.8, item_cat_rate=0.005, train_df=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user_image_embeddings = None
         self.item_image_embeddings = None
         self.user_text_embeddings = None
         self.item_text_embeddings = None
+        self.user_cat_rate = user_cat_rate
+        self.item_cat_rate = item_cat_rate
         self.n_users = n_users
         self.n_items = n_items
         self.embed_size = embed_size
@@ -64,7 +67,7 @@ class MmModel(nn.Module):
         self.book_attributes_data = torch.tensor(book_attributes_data, dtype=torch.float32).to(device)
         self.user_profiles_data = torch.tensor(user_profiles_data, dtype=torch.float32).to(device)
         self.user_item_interactions = interactions.to(device)
-        self.item_user_interactions = self.user_item_interactions.t().to(device)
+        self.item_user_interactions = interactions_t.to(device)
 
     def propagate(self):
         """
@@ -112,32 +115,27 @@ class MmModel(nn.Module):
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
 
+        # side information incorporation
         user_embeddings += self.model_cat_rate * F.normalize(user_image_feature, p=2,
-                                                                              dim=1) + self.model_cat_rate * F.normalize(
+                                                             dim=1) + self.model_cat_rate * F.normalize(
             user_text_feature, p=2, dim=1)
 
         item_embeddings += self.model_cat_rate * F.normalize(item_image_feature, p=2,
-                                                                              dim=1) + self.model_cat_rate * F.normalize(
+                                                             dim=1) + self.model_cat_rate * F.normalize(
             item_text_feature, p=2, dim=1)
 
         # augmented data incorporation
-        user_embeddings += self.model_cat_rate * F.normalize(user_profile_feat, p=2, dim=1)
-        user_embeddings += self.model_cat_rate * F.normalize(user_attributes, p=2, dim=1)
+        user_embeddings += self.user_cat_rate * F.normalize(user_profile_feat, p=2, dim=1)
+        user_embeddings += self.item_cat_rate * F.normalize(user_attributes, p=2, dim=1)
 
-        item_embeddings += self.model_cat_rate * F.normalize(item_profile_feat, p=2, dim=1)
-        item_embeddings += self.model_cat_rate * F.normalize(item_attributes, p=2, dim=1)
+        item_embeddings += self.user_cat_rate * F.normalize(item_profile_feat, p=2, dim=1)
+        item_embeddings += self.item_cat_rate * F.normalize(item_attributes, p=2, dim=1)
 
         return user_embeddings, item_embeddings, user_image_feature, item_image_feature, user_text_feature, item_text_feature, user_attributes, item_attributes, user_profile_feat, item_profile_feat
 
     def forward(self, user_indices, pos_item_indices, neg_item_indices):
 
         user_embeddings, item_embeddings, user_image_embeddings, item_image_embeddings, user_text_embeddings, item_text_embeddings, user_attributes_embeddings, item_attributes_embeddings, user_profile_feat_embd, item_profile_feat_embed = self.propagate()
-
-        # side information incorporation
-
-
-
-
 
         self.user_image_embeddings = user_image_embeddings
         self.item_image_embeddings = item_image_embeddings
@@ -176,7 +174,7 @@ class MmModel(nn.Module):
             "text_embeddings": (user_text_embeddings, pos_item_text_embeddings, neg_item_text_embeddings),
             "profile_embeddings": (user_profile_embeddings, item_profile_pos_embeddings, item_profile_neg_embeddings),
             "attributes_embeddings": (
-            user_attributes_embeddings, item_attributes_pos_embeddings, item_attributes_neg_embeddings)
+                user_attributes_embeddings, item_attributes_pos_embeddings, item_attributes_neg_embeddings)
         }
 
         return results

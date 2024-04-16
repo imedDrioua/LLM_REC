@@ -77,7 +77,8 @@ class Trainer:
                 users += users_aug
                 pos_items += pos_items_aug
                 neg_items += neg_items_aug
-
+                nn.utils.clip_grad_norm_(self.model.parameters(),
+                                         max_norm=1.0)
                 self.optimizer.zero_grad()
                 embeddings_dict = self.model(
                     users, pos_items, neg_items)
@@ -89,8 +90,7 @@ class Trainer:
                     "augmentation_loss"] * self.augmentation_rate + loss_dict["side_info_reg_loss"]
 
                 total_loss.backward(retain_graph=False)
-                nn.utils.clip_grad_norm_(self.model.parameters(),
-                                         max_norm=1.0)
+
                 self.optimizer.step()
                 loss += total_loss.item()
             del embeddings_dict
