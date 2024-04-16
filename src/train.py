@@ -60,7 +60,7 @@ class Trainer:
         :return:  None
         :rtype: None
         """
-        n_batch = self.dataset.n_users // batch_size + 1
+        n_batch = self.dataset.n_train // batch_size + 1
 
         for epoch in range(epochs):
             start = time()
@@ -86,8 +86,9 @@ class Trainer:
                 loss_dict = self.calculate_all_losses(embeddings_dict)
 
                 # total loss
-                total_loss = loss_dict["embeddings_loss"] + self.side_info_rate * loss_dict["side_info_loss"] + loss_dict[
-                    "augmentation_loss"] * self.augmentation_rate + loss_dict["side_info_reg_loss"]
+                total_loss = loss_dict["embeddings_loss"] + self.side_info_rate * loss_dict["side_info_loss"] + \
+                             loss_dict[
+                                 "augmentation_loss"] * self.augmentation_rate + loss_dict["side_info_reg_loss"]
 
                 total_loss.backward(retain_graph=False)
 
@@ -98,7 +99,6 @@ class Trainer:
             evaluation_results, results_string = self.evaluate(test_users)
             self.logger.logging(f'Epoch {epoch} Loss {loss / n_batch} Time {time() - start}')
             self.logger.logging(results_string)
-
 
     def evaluate(self, test_users):
         """
@@ -167,7 +167,7 @@ class Trainer:
                                                                 embedding_dict["attributes_embeddings"][2],
                                                                 self.dataset.batch_size)
         item_attr_loss = item_attr_mf_loss + item_attr_emb_loss
-        augmentation_loss =  item_attr_loss
+        augmentation_loss = item_attr_loss
 
         return {"embeddings_loss": embeddings_loss,
                 "side_info_loss": side_info_loss,

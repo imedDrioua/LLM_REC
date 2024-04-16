@@ -1,12 +1,27 @@
 import numpy as np
 import os
 
-import scipy as sp
+import scipy.sparse as sp
 import torch
 import json
 import random
 import pandas as pd
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def csr_norm(csr_mat, mean_flag=False):  # TODO: check if this function exists in a python library
+    rowsum = np.array(csr_mat.sum(1))
+    rowsum = np.power(rowsum + 1e-8, -0.5).flatten()
+    rowsum[np.isinf(rowsum)] = 0.
+    rowsum_diag = sp.diags(rowsum)
+    colsum = np.array(csr_mat.sum(0))
+    colsum = np.power(colsum + 1e-8, -0.5).flatten()
+    colsum[np.isinf(colsum)] = 0.
+    colsum_diag = sp.diags(colsum)
+    if mean_flag == False:
+        return rowsum_diag * csr_mat * colsum_diag
+    else:
+        return rowsum_diag * csr_mat
 
 
 def matrix_to_tensor(cur_matrix):
@@ -21,22 +36,6 @@ def matrix_to_tensor(cur_matrix):
         return torch.sparse_coo_tensor(indices, values, shape).to(torch.float32).cpu()
 
 
-def csr_norm(csr_mat, mean_flag=False):
-    rowsum = np.array(csr_mat.sum(1))
-    rowsum = np.power(rowsum + 1e-8, -0.5).flatten()
-    rowsum[np.isinf(rowsum)] = 0.
-    rowsum_diag = sp.diags(rowsum)
-    colsum = np.array(csr_mat.sum(0))
-    colsum = np.power(colsum + 1e-8, -0.5).flatten()
-    colsum[np.isinf(colsum)] = 0.
-    colsum_diag = sp.diags(colsum)
-
-    if not mean_flag:
-        return rowsum_diag * csr_mat * colsum_diag
-    else:
-        return rowsum_diag * csr_mat
-
-
 class BooksDataset:
 
     def __init__(self, data_dir, batch_size=1024):
@@ -49,9 +48,9 @@ class BooksDataset:
         self.books_attributes = np.load(f'{data_dir}/films_attributes_embeddings.npy')
         self.interactions = pd.read_pickle(f'{data_dir}/train_mat')
         self.interactions_T = self.interactions.T
-        self.interactions = csr_norm(self.interactions)
+        self.interactions = csr_norm(self.interactions, mean_flag=True)
         self.interactions = matrix_to_tensor(self.interactions)
-        self.interactions_T = csr_norm(self.interactions_T)
+        self.interactions_T = csr_norm(self.interactions_T,mean_flag=True)
         self.interactions_T = matrix_to_tensor(self.interactions_T)
         # check if the adjacency matrix exists, if not, it will be created with the model
         self.adjacency_matrix = None

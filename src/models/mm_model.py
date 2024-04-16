@@ -40,15 +40,15 @@ class MmModel(nn.Module):
 
         # Side information layers
         self.image_feat = nn.Linear(image_embeddings_data.shape[1], self.embed_size)
-        self.text_feat_dropout = nn.Dropout(0.1)
+        self.text_feat_dropout = nn.Dropout(0)
         self.text_feat = nn.Linear(text_embeddings_data.shape[1], self.embed_size)
-        self.image_feat_dropout = nn.Dropout(0.1)
+        self.image_feat_dropout = nn.Dropout(0)
 
         # augmented feature linear layers and dropout
         self.user_profiles = nn.Linear(user_profiles_data.shape[1], self.embed_size)
-        self.user_profiles_dropout = nn.Dropout(0.1)
+        self.user_profiles_dropout = nn.Dropout(0)
         self.book_attributes = nn.Linear(book_attributes_data.shape[1], self.embed_size)
-        self.book_attributes_dropout = nn.Dropout(0.1)
+        self.book_attributes_dropout = nn.Dropout(0)
 
         # weight initialization with xavier uniform
         init.xavier_uniform_(self.E0.weight)
@@ -116,14 +116,11 @@ class MmModel(nn.Module):
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
 
         # side information incorporation
-        user_embeddings += self.model_cat_rate * F.normalize(user_image_feature, p=2,
-                                                             dim=1) + self.model_cat_rate * F.normalize(
-            user_text_feature, p=2, dim=1)
+        user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_image_feature, p=2,dim=1)
+        user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_text_feature, p=2, dim=1)
 
-        item_embeddings += self.model_cat_rate * F.normalize(item_image_feature, p=2,
-                                                             dim=1) + self.model_cat_rate * F.normalize(
-            item_text_feature, p=2, dim=1)
-
+        item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_image_feature, p=2,dim=1)
+        item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_text_feature, p=2, dim=1)
         # augmented data incorporation
         user_embeddings += self.user_cat_rate * F.normalize(user_profile_feat, p=2, dim=1)
         user_embeddings += self.item_cat_rate * F.normalize(user_attributes, p=2, dim=1)
