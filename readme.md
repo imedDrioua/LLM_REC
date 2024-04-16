@@ -1,0 +1,6 @@
+- Incorporation
+- Interactions (séparer les deux) et les normaliser 
+- clip grad (changer le max norm)
+- test (réduire le nombre de test), et verifier pourquoi le test est si long si aucune solution n'est trouvée supprimer la classe test
+- vérifier l'ordre dans la boucle pytorch
+- si les résultats sont mauvais, fait les memes embeddings et met le meme loss 

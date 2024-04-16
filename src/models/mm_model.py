@@ -72,7 +72,7 @@ class MmModel(nn.Module):
         :return:  user_embeddings, item_embeddings
         :rtype: torch.Tensor, torch.Tensor
         """
-         # get the embeddings of the users and items
+        # get the embeddings of the users and items
         all_embeddings = [self.E0.weight]
         # all_image_embeddings = [self.image_feat.weight.t()]
         # all_text_embeddings = [self.text_feat.weight.t()]
@@ -112,28 +112,32 @@ class MmModel(nn.Module):
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
 
+        user_embeddings += self.model_cat_rate * F.normalize(user_image_feature, p=2,
+                                                                              dim=1) + self.model_cat_rate * F.normalize(
+            user_text_feature, p=2, dim=1)
+
+        item_embeddings += self.model_cat_rate * F.normalize(item_image_feature, p=2,
+                                                                              dim=1) + self.model_cat_rate * F.normalize(
+            item_text_feature, p=2, dim=1)
+
+        # augmented data incorporation
+        user_embeddings += self.model_cat_rate * F.normalize(user_profile_feat, p=2, dim=1)
+        user_embeddings += self.model_cat_rate * F.normalize(user_attributes, p=2, dim=1)
+
+        item_embeddings += self.model_cat_rate * F.normalize(item_profile_feat, p=2, dim=1)
+        item_embeddings += self.model_cat_rate * F.normalize(item_attributes, p=2, dim=1)
 
         return user_embeddings, item_embeddings, user_image_feature, item_image_feature, user_text_feature, item_text_feature, user_attributes, item_attributes, user_profile_feat, item_profile_feat
 
     def forward(self, user_indices, pos_item_indices, neg_item_indices):
 
-
         user_embeddings, item_embeddings, user_image_embeddings, item_image_embeddings, user_text_embeddings, item_text_embeddings, user_attributes_embeddings, item_attributes_embeddings, user_profile_feat_embd, item_profile_feat_embed = self.propagate()
 
         # side information incorporation
-        user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_image_embeddings, p=2,
-                                                                              dim=1) + self.model_cat_rate * F.normalize(
-            user_text_embeddings, p=2, dim=1)
-        item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_image_embeddings, p=2,
-                                                                              dim=1) + self.model_cat_rate * F.normalize(
-            item_text_embeddings, p=2, dim=1)
 
-        # augmented data incorporation
-        user_embeddings += self.model_cat_rate * F.normalize(user_profile_feat_embd, p=2, dim=1)
-        user_embeddings += self.model_cat_rate * F.normalize(user_attributes_embeddings, p=2, dim=1)
 
-        item_embeddings += self.model_cat_rate * F.normalize(item_profile_feat_embed, p=2, dim=1)
-        item_embeddings += self.model_cat_rate * F.normalize(item_attributes_embeddings, p=2, dim=1)
+
+
 
         self.user_image_embeddings = user_image_embeddings
         self.item_image_embeddings = item_image_embeddings
@@ -159,19 +163,20 @@ class MmModel(nn.Module):
         user_profile_embeddings = user_profile_feat_embd[user_indices]
         item_profile_pos_embeddings = item_profile_feat_embed[pos_item_indices]
         item_profile_neg_embeddings = item_profile_feat_embed[neg_item_indices]
-        
+
         # get user attributes embeddings of the users and items
         user_attributes_embeddings = user_attributes_embeddings[user_indices]
         item_attributes_pos_embeddings = item_attributes_embeddings[pos_item_indices]
         item_attributes_neg_embeddings = item_attributes_embeddings[neg_item_indices]
-        
+
         # create a dictionary of the embeddings
         results = {
             "embeddings": (user_embeddings, pos_item_embeddings, neg_item_embeddings),
             "image_embeddings": (user_image_embeddings, pos_item_image_embeddings, neg_item_image_embeddings),
             "text_embeddings": (user_text_embeddings, pos_item_text_embeddings, neg_item_text_embeddings),
             "profile_embeddings": (user_profile_embeddings, item_profile_pos_embeddings, item_profile_neg_embeddings),
-            "attributes_embeddings": (user_attributes_embeddings, item_attributes_pos_embeddings, item_attributes_neg_embeddings)
+            "attributes_embeddings": (
+            user_attributes_embeddings, item_attributes_pos_embeddings, item_attributes_neg_embeddings)
         }
 
         return results
