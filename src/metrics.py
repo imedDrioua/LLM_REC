@@ -191,7 +191,7 @@ def get_performance(r, auc, user_pos_test, Ks):
             'ndcg': np.array(ndcg), 'hit_ratio': np.array(hit_ratio), 'auc': auc}
 
 
-def rank_list_by_heapq(rating, user_pos_test, test_items,Ks):
+def rank_list_by_heapq(user_pos_test, test_items, rating, Ks):
     """
     Rank the list by heapq
 
@@ -221,7 +221,7 @@ def rank_list_by_heapq(rating, user_pos_test, test_items,Ks):
     return r, auc
 
 
-def rank_list_by_sorted(rating, user_pos_test, test_items, Ks):
+def rank_list_by_sorted(user_pos_test, test_items, rating, Ks):
     """
     Rank the list by sorted
 

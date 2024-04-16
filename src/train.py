@@ -10,6 +10,7 @@ from tqdm import tqdm
 from src.models.loss_functions import bpr_loss_aug
 from src.test import Tester
 from src.logging import Logger
+from src.test_b import test_torch
 
 
 class Trainer:
@@ -96,9 +97,8 @@ class Trainer:
                 loss += total_loss.item()
             del embeddings_dict
             test_users = self.dataset.get_dataset('test_dict')
-            evaluation_results, results_string = self.evaluate(test_users)
-            self.logger.logging(f'Epoch {epoch} Loss {loss / n_batch} Time {time() - start}')
-            self.logger.logging(results_string)
+            evaluation_results = self.evaluate(test_users)
+            print(evaluation_results)
 
     def evaluate(self, test_users):
         """
@@ -111,10 +111,8 @@ class Trainer:
         self.model.eval()
         with torch.no_grad():
             user_embeddings, item_embeddings, _, _, _, _, _, _, _, _ = self.model.propagate()
-
-            return self.tester.test(user_embeddings, item_embeddings, self.dataset.batch_size,
-                                    False,
-                                    False)
+            users_to_test = [int(x) for x in list(test_users.keys())]
+            return test_torch(user_embeddings, item_embeddings,users_to_test)
 
     def calculate_all_losses(self, embedding_dict):
         """
@@ -162,7 +160,7 @@ class Trainer:
         user_profile_loss = user_profile_mf_loss + user_profile_emb_loss
 
         # item attributes loss
-        item_attr_mf_loss, item_attr_emb_loss, _ = bpr_loss_aug(embedding_dict["attributes_embeddings"][0],
+        item_attr_mf_loss, item_attr_emb_loss, _ = bpr_loss_aug(embedding_dict["profile_embeddings"][0],
                                                                 embedding_dict["attributes_embeddings"][1],
                                                                 embedding_dict["attributes_embeddings"][2],
                                                                 self.dataset.batch_size)
