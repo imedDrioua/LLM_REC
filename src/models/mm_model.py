@@ -49,6 +49,7 @@ class MmModel(nn.Module):
         self.user_profiles_dropout = nn.Dropout(0)
         self.book_attributes = nn.Linear(book_attributes_data.shape[1], self.embed_size)
         self.book_attributes_dropout = nn.Dropout(0)
+        self.softmax = nn.Softmax(dim=-1)
 
         # weight initialization with xavier uniform
         init.xavier_uniform_(self.E0.weight)
@@ -93,7 +94,7 @@ class MmModel(nn.Module):
             all_embeddings.append(e_layer_weight)
 
         # calculate embeddings for side information and augmented data
-        for _ in range(1):
+        for _ in range(3):
             user_image_feature = torch.sparse.mm(self.user_item_interactions, image_layer_weight)
             item_image_feature = torch.sparse.mm(self.item_user_interactions, user_image_feature)
 
@@ -114,7 +115,9 @@ class MmModel(nn.Module):
 
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
-
+        # apply softmax to the embeddings
+        # user_embeddings = self.softmax(user_embeddings)
+        # item_embeddings = self.softmax(item_embeddings)
         # side information incorporation
         user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_image_feature, p=2,dim=1)
         user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_text_feature, p=2, dim=1)

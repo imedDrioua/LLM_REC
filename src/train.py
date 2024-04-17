@@ -78,8 +78,6 @@ class Trainer:
                 users += users_aug
                 pos_items += pos_items_aug
                 neg_items += neg_items_aug
-                nn.utils.clip_grad_norm_(self.model.parameters(),
-                                         max_norm=1.0)
                 self.optimizer.zero_grad()
                 embeddings_dict = self.model(
                     users, pos_items, neg_items)
@@ -98,6 +96,8 @@ class Trainer:
             del embeddings_dict
             test_users = self.dataset.get_dataset('test_dict')
             evaluation_results = self.evaluate(test_users)
+            #print loss (not logging)
+            print("Epoch %d/%d, Loss=%.4f, Time=%.2f" % (epoch + 1, epochs, loss, time() - start))
             print(evaluation_results)
 
     def evaluate(self, test_users):
@@ -111,7 +111,7 @@ class Trainer:
         self.model.eval()
         with torch.no_grad():
             user_embeddings, item_embeddings, _, _, _, _, _, _, _, _ = self.model.propagate()
-            users_to_test = [int(x) for x in list(test_users.keys())]
+            users_to_test = [int(x) for x in list(self.dataset.get_dataset("test_dict").keys())]
             return test_torch(user_embeddings, item_embeddings,users_to_test)
 
     def calculate_all_losses(self, embedding_dict):
@@ -128,21 +128,21 @@ class Trainer:
                                                    embedding_dict["embeddings"][1],
                                                    embedding_dict["embeddings"][2],
                                                    self.dataset.batch_size)
-        embeddings_loss = mf_loss + reg_loss + emb_loss
+        embeddings_loss = mf_loss + reg_loss
 
         # image embeddings loss
         image_mf_loss, image_emb_loss, image_reg_loss = bpr_loss_aug(embedding_dict["image_embeddings"][0],
                                                                      embedding_dict["image_embeddings"][1],
                                                                      embedding_dict["image_embeddings"][2],
                                                                      self.dataset.batch_size)
-        image_embeddings_loss = image_mf_loss + image_emb_loss
+        image_embeddings_loss = image_mf_loss
 
         # text embeddings loss
         text_mf_loss, text_emb_loss, text_reg_loss = bpr_loss_aug(embedding_dict["text_embeddings"][0],
                                                                   embedding_dict["text_embeddings"][1],
                                                                   embedding_dict["text_embeddings"][2],
                                                                   self.dataset.batch_size)
-        text_embeddings_loss = text_mf_loss + text_emb_loss
+        text_embeddings_loss = text_mf_loss
         # side info loss
         side_info_loss = image_embeddings_loss + text_embeddings_loss
 
@@ -153,19 +153,19 @@ class Trainer:
                                                             self.model.user_text_embeddings)
 
         # user profile loss
-        user_profile_mf_loss, user_profile_emb_loss, _ = bpr_loss_aug(embedding_dict["profile_embeddings"][0],
+        user_profile_mf_loss, user_profile_emb_loss, _ = bpr_loss_aug(embedding_dict["attributes_embeddings"][0],
                                                                       embedding_dict["profile_embeddings"][1],
                                                                       embedding_dict["profile_embeddings"][2],
                                                                       self.dataset.batch_size)
-        user_profile_loss = user_profile_mf_loss + user_profile_emb_loss
+        user_profile_loss = user_profile_mf_loss
 
         # item attributes loss
         item_attr_mf_loss, item_attr_emb_loss, _ = bpr_loss_aug(embedding_dict["profile_embeddings"][0],
                                                                 embedding_dict["attributes_embeddings"][1],
                                                                 embedding_dict["attributes_embeddings"][2],
                                                                 self.dataset.batch_size)
-        item_attr_loss = item_attr_mf_loss + item_attr_emb_loss
-        augmentation_loss = item_attr_loss
+        item_attr_loss = item_attr_mf_loss
+        augmentation_loss = item_attr_loss + user_profile_loss
 
         return {"embeddings_loss": embeddings_loss,
                 "side_info_loss": side_info_loss,

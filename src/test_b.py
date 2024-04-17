@@ -10,11 +10,10 @@ cores = multiprocessing.cpu_count() // 5
 
 Ks = eval("[10, 20, 50]")
 
-USR_NUM, ITEM_NUM = 13178, 17366
-N_TRAIN, N_TEST = 68933, 1845
+ITEM_NUM = 17366
 BATCH_SIZE = 1024
 
-dataset = BooksDataset(data_dir="../data/netflix")
+dataset = BooksDataset(data_dir="./data/netflix")
 
 
 def test_one_user(x):
@@ -39,11 +38,11 @@ def test_one_user(x):
     test_items = list(all_items - set(training_items))
 
     if "part" == 'part':
-        r, auc = rank_list_by_heapq(user_pos_test, test_items, rating, Ks)
+        r, auc = rank_list_by_heapq(list(user_pos_test), test_items, rating, Ks)
     else:
-        r, auc = rank_list_by_sorted(user_pos_test, test_items, rating, Ks)
+        r, auc = rank_list_by_sorted(list(user_pos_test), test_items, rating, Ks)
 
-    return get_performance(user_pos_test, r, auc, Ks)
+    return get_performance(r, auc, list(user_pos_test), Ks)
 
 
 def test_torch(ua_embeddings, ia_embeddings, users_to_test, is_val=False, drop_flag=False, batch_test_flag=False):
