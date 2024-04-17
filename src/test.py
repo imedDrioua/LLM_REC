@@ -1,14 +1,33 @@
 import multiprocessing
+import os
+
 import torch
 import numpy as np
+import json
 from src.metrics import get_performance, rank_list_by_heapq, rank_list_by_sorted
 from src.data_loader.data_loader import BooksDataset
-
+print(os.getcwd())
 cores = multiprocessing.cpu_count() // 5
-
+data_dir = "./data/books"
 Ks = eval("[10, 20, 50]")
-dataset = BooksDataset(data_dir="./data/netflix")
-
+with open(f'{data_dir}/train.json', 'r') as f:
+    train_dict = json.load(f)
+with open(f'{data_dir}/test.json', 'r') as f:
+    test_dict = json.load(f)
+test_set = {}
+for uid, test_items in test_dict.items():
+    if len(test_items) == 0:
+        continue
+    try:
+        test_set[uid] = test_items
+    except:
+        continue
+test_dict = test_set
+with open(f'{data_dir}/validation.json', 'r') as f:
+    val_dict = json.load(f)
+n_items = 14790
+n_users = 33962
+batch_size = 1024
 
 def test(ua_embeddings, ia_embeddings, users_to_test,batch_test_flag=False, is_val=False):
     """
@@ -31,8 +50,8 @@ def test(ua_embeddings, ia_embeddings, users_to_test,batch_test_flag=False, is_v
               'hit_ratio': np.zeros(len(Ks)), 'auc': 0.}
     pool = multiprocessing.Pool(cores)
 
-    u_batch_size = dataset.batch_size * 2
-    i_batch_size = dataset.batch_size
+    u_batch_size = batch_size * 2
+    i_batch_size = batch_size
 
     test_users = users_to_test
     n_test_users = len(test_users)
@@ -44,13 +63,13 @@ def test(ua_embeddings, ia_embeddings, users_to_test,batch_test_flag=False, is_v
         end = (u_batch_id + 1) * u_batch_size
         user_batch = test_users[start: end]
         if batch_test_flag:
-            n_item_batchs = dataset.n_items // i_batch_size + 1
-            rate_batch = np.zeros(shape=(len(user_batch), dataset.n_items))
+            n_item_batchs = n_items // i_batch_size + 1
+            rate_batch = np.zeros(shape=(len(user_batch), n_items))
 
             i_count = 0
             for i_batch_id in range(n_item_batchs):
                 i_start = i_batch_id * i_batch_size
-                i_end = min((i_batch_id + 1) * i_batch_size, dataset.n_items)
+                i_end = min((i_batch_id + 1) * i_batch_size, n_items)
 
                 item_batch = range(i_start, i_end)
                 u_g_embeddings = ua_embeddings[user_batch]
@@ -60,10 +79,10 @@ def test(ua_embeddings, ia_embeddings, users_to_test,batch_test_flag=False, is_v
                 rate_batch[:, i_start: i_end] = i_rate_batch
                 i_count += i_rate_batch.shape[1]
 
-            assert i_count == dataset.n_items
+            assert i_count == n_items
 
         else:
-            item_batch = range(dataset.n_items)
+            item_batch = range(n_items)
             u_g_embeddings = ua_embeddings[user_batch]
             i_g_embeddings = ia_embeddings[item_batch]
             rate_batch = torch.matmul(u_g_embeddings, torch.transpose(i_g_embeddings, 0, 1))
@@ -111,16 +130,16 @@ def test_one_user(x):
     u = x[1]
     # user u's items in the training set
     try:
-        training_items = dataset.get_dataset("train_dict")[str(u)]
+        training_items = train_dict[str(u)]
     except KeyError:
         training_items = []
     # user u's items in the test set
     if is_val:
-        user_pos_test = dataset.get_dataset("val_dict")[str(u)]
+        user_pos_test = val_dict[str(u)]
     else:
-        user_pos_test = dataset.get_dataset("test_dict")[str(u)]
+        user_pos_test = test_dict[str(u)]
 
-    all_items = set(range(dataset.n_items))
+    all_items = set(range(n_items))
 
     test_items = list(all_items - set(training_items))
 

@@ -23,7 +23,7 @@ def set_seed(seed):
 
 
 if __name__ == "__main__":
-    dataset_name = "netflix"
+    dataset_name = "books"
     set_seed(2022)
     # load the dataset
     dataset = BooksDataset(data_dir=f"./data/{dataset_name}")

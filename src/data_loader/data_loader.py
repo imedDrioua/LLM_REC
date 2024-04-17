@@ -6,6 +6,7 @@ import torch
 import json
 import random
 import pandas as pd
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -34,24 +35,11 @@ def csr_norm(csr_mat, mean_flag=False):
         return rowsum_diag * csr_mat
 
 
-def matrix_to_tensor(cur_matrix):
-    """
-    Convert the input matrix to a tensor format
-
-    :param cur_matrix:  input matrix
-    :type cur_matrix: np.ndarray
-    :return:  tensor
-    :rtype: torch.Tensor
-    """
-    if type(cur_matrix) != sp.coo_matrix:
-        cur_matrix = cur_matrix.tocoo()  #
-    indices = torch.from_numpy(np.vstack((cur_matrix.row, cur_matrix.col)).astype(np.int64))  #
-    values = torch.from_numpy(cur_matrix.data)  #
-    shape = torch.Size(cur_matrix.shape)
-    if device == torch.device("cuda"):
-        return torch.sparse_coo_tensor(indices, values, shape).to(torch.float32).cuda()  #
-    else:
-        return torch.sparse_coo_tensor(indices, values, shape).to(torch.float32).cpu()
+def matrix_to_tensor(numpy_matrix):
+    sparse_tensor = torch.sparse_coo_tensor(torch.from_numpy(np.argwhere(numpy_matrix != 0).T),
+                                            torch.from_numpy(numpy_matrix[np.nonzero(numpy_matrix)]),
+                                            numpy_matrix.shape, dtype=torch.float32)
+    return sparse_tensor
 
 
 class BooksDataset:
@@ -63,12 +51,12 @@ class BooksDataset:
         self.images = np.load(f'{data_dir}/embed_image.npy')
         self.text = np.load(f'{data_dir}/embed_text.npy')
         self.user_profiles = np.load(f'{data_dir}/users_profiles_embeddings.npy')
-        self.books_attributes = np.load(f'{data_dir}/films_attributes_embeddings.npy')
-        self.interactions = pd.read_pickle(f'{data_dir}/train_mat')
+        self.books_attributes = np.load(f'{data_dir}/books_attributes_embeddings.npy')
+        self.interactions = pd.read_pickle(f'{data_dir}/train_matrix.pkl')
         self.interactions_T = self.interactions.T
         self.interactions = csr_norm(self.interactions, mean_flag=True)
         self.interactions = matrix_to_tensor(self.interactions)
-        self.interactions_T = csr_norm(self.interactions_T,mean_flag=True)
+        self.interactions_T = csr_norm(self.interactions_T, mean_flag=True)
         self.interactions_T = matrix_to_tensor(self.interactions_T)
         # check if the adjacency matrix exists, if not, it will be created with the model
         self.adjacency_matrix = None
