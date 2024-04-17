@@ -19,6 +19,9 @@ class MmModel(nn.Module):
                  n_layers, model_cat_rate=0.02, user_cat_rate=2.8, item_cat_rate=0.005, train_df=None,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.E0_item_pos = None
+        self.E0_item_neg = None
+        self.E0_user = None
         self.user_image_embeddings = None
         self.item_image_embeddings = None
         self.user_text_embeddings = None
@@ -37,22 +40,28 @@ class MmModel(nn.Module):
         # optimizer
         # user and item embedding layers
         self.E0 = nn.Embedding(self.n_users + self.n_items, self.embed_size)
+        self.embeddings_dropout = nn.Dropout(0.1)
+        self.embeddings_norm = nn.BatchNorm1d(self.embed_size)
 
         # Side information layers
         self.image_feat = nn.Linear(image_embeddings_data.shape[1], self.embed_size)
-        self.text_feat_dropout = nn.Dropout(0)
+        self.image_batch_norm = nn.BatchNorm1d(embed_size)
+        self.image_feat_dropout = nn.Dropout(0.1)
         self.text_feat = nn.Linear(text_embeddings_data.shape[1], self.embed_size)
-        self.image_feat_dropout = nn.Dropout(0)
+        self.text_batch_norm = nn.BatchNorm1d(embed_size)
+        self.text_feat_dropout = nn.Dropout(0.1)
 
         # augmented feature linear layers and dropout
         self.user_profiles = nn.Linear(user_profiles_data.shape[1], self.embed_size)
-        self.user_profiles_dropout = nn.Dropout(0)
+        self.usuer_profiles_batch_norm = nn.BatchNorm1d(embed_size)
+        self.user_profiles_dropout = nn.Dropout(0.2)
         self.book_attributes = nn.Linear(book_attributes_data.shape[1], self.embed_size)
-        self.book_attributes_dropout = nn.Dropout(0)
-        self.softmax = nn.Softmax(dim=-1)
+        self.book_attributes_batch_norm = nn.BatchNorm1d(embed_size)
+        self.book_attributes_dropout = nn.Dropout(0.2)
+        # self.softmax = nn.Softmax(dim=-1)
 
         # weight initialization with xavier uniform
-        init.xavier_uniform_(self.E0.weight)
+        init.kaiming_normal_(self.E0.weight)  # kaiming
         init.xavier_uniform_(self.text_feat.weight)
         init.xavier_uniform_(self.image_feat.weight)
         init.xavier_uniform_(self.user_profiles.weight)
@@ -76,35 +85,41 @@ class MmModel(nn.Module):
         :return:  user_embeddings, item_embeddings
         :rtype: torch.Tensor, torch.Tensor
         """
-        # get the embeddings of the users and items
-        all_embeddings = [self.E0.weight]
+        # normalize the weights of the embeddings
+        e_layer_weight = self.embeddings_dropout(self.E0.weight)
+        all_embeddings = [e_layer_weight]
+        # normalize the embeddings
         # all_image_embeddings = [self.image_feat.weight.t()]
         # all_text_embeddings = [self.text_feat.weight.t()]
         user_image_feature, item_image_feature, user_text_feature, item_text_feature = None, None, None, None
         user_attributes, item_attributes, user_profile_feat, item_profile_feat = None, None, None, None
 
-        e_layer_weight = self.E0.weight
-        image_layer_weight = self.image_feat_dropout(self.image_feat(self.image_embeddings_data))
-        text_layer_weight = self.text_feat_dropout(self.text_feat(self.text_embeddings_data))
-        user_profiles_weight = self.user_profiles_dropout(self.user_profiles(self.user_profiles_data))
-        items_attributes_weight = self.book_attributes_dropout(self.book_attributes(self.book_attributes_data))
-
+        image_layer_weight = self.image_feat_dropout(self.image_batch_norm(self.image_feat(self.image_embeddings_data)))
+        text_layer_weight = self.text_feat_dropout(self.text_batch_norm(self.text_feat(self.text_embeddings_data)))
+        user_profiles_weight = self.user_profiles_dropout(
+            self.usuer_profiles_batch_norm(self.user_profiles(self.user_profiles_data)))
+        items_attributes_weight = self.book_attributes_dropout(
+            self.book_attributes_batch_norm(self.book_attributes(self.book_attributes_data)))
+        item_image_feature = image_layer_weight
+        item_text_feature = text_layer_weight
+        user_profile_feat = user_profiles_weight
+        item_attributes = items_attributes_weight
         for _ in range(self.n_layers):
-            e_layer_weight = torch.sparse.mm(self.user_item_matrix, e_layer_weight)
+            e_layer_weight = torch.mm(self.user_item_matrix, e_layer_weight)
             all_embeddings.append(e_layer_weight)
 
         # calculate embeddings for side information and augmented data
-        for _ in range(3):
-            user_image_feature = torch.sparse.mm(self.user_item_interactions, image_layer_weight)
+        for _ in range(1):
+            user_image_feature = torch.sparse.mm(self.user_item_interactions, item_image_feature)
             item_image_feature = torch.sparse.mm(self.item_user_interactions, user_image_feature)
 
-            user_text_feature = torch.sparse.mm(self.user_item_interactions, text_layer_weight)
+            user_text_feature = torch.sparse.mm(self.user_item_interactions, item_text_feature)
             item_text_feature = torch.sparse.mm(self.item_user_interactions, user_text_feature)
 
-            user_attributes = torch.sparse.mm(self.user_item_interactions, items_attributes_weight)
+            user_attributes = torch.sparse.mm(self.user_item_interactions, item_attributes)
             item_attributes = torch.sparse.mm(self.item_user_interactions, user_attributes)
 
-            item_profile_feat = torch.sparse.mm(self.item_user_interactions, user_profiles_weight)
+            item_profile_feat = torch.sparse.mm(self.item_user_interactions, user_profile_feat)
             user_profile_feat = torch.sparse.mm(self.user_item_interactions, item_profile_feat)
 
         # stack the embeddings
@@ -115,14 +130,13 @@ class MmModel(nn.Module):
 
         # Split the embeddings of the users and items
         user_embeddings, item_embeddings = torch.split(all_embeddings_mean, [self.n_users, self.n_items], dim=0)
-        # apply softmax to the embeddings
-        # user_embeddings = self.softmax(user_embeddings)
-        # item_embeddings = self.softmax(item_embeddings)
+        self.user_E0, self.item_E0 = torch.split(self.E0.weight, [self.n_users, self.n_items], dim=0)
+
         # side information incorporation
-        user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_image_feature, p=2,dim=1)
+        user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_image_feature, p=2, dim=1)
         user_embeddings = user_embeddings + self.model_cat_rate * F.normalize(user_text_feature, p=2, dim=1)
 
-        item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_image_feature, p=2,dim=1)
+        item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_image_feature, p=2, dim=1)
         item_embeddings = item_embeddings + self.model_cat_rate * F.normalize(item_text_feature, p=2, dim=1)
         # augmented data incorporation
         user_embeddings += self.user_cat_rate * F.normalize(user_profile_feat, p=2, dim=1)
@@ -166,6 +180,10 @@ class MmModel(nn.Module):
         user_attributes_embeddings = user_attributes_embeddings[user_indices]
         item_attributes_pos_embeddings = item_attributes_embeddings[pos_item_indices]
         item_attributes_neg_embeddings = item_attributes_embeddings[neg_item_indices]
+
+        self.E0_user = self.user_E0[user_indices]
+        self.E0_item_pos = self.item_E0[pos_item_indices]
+        self.E0_item_neg = self.item_E0[neg_item_indices]
 
         # create a dictionary of the embeddings
         results = {
@@ -216,3 +234,5 @@ class MmModel(nn.Module):
         norm_adj_mat_sparse_tensor = torch.sparse_coo_tensor(i, v, torch.Size(shape))
 
         self.user_item_matrix = norm_adj_mat_sparse_tensor
+
+# %%

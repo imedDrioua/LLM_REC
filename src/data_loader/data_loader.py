@@ -9,7 +9,17 @@ import pandas as pd
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def csr_norm(csr_mat, mean_flag=False):  # TODO: check if this function exists in a python library
+def csr_norm(csr_mat, mean_flag=False):
+    """
+    Normalize the input matrix
+
+    :param csr_mat:  input matrix
+    :type csr_mat: sp.csr_matrix
+    :param mean_flag:  flag to indicate if the mean should be used
+    :type mean_flag: bool
+    :return:  normalized matrix
+    :rtype: sp.csr_matrix
+    """
     rowsum = np.array(csr_mat.sum(1))
     rowsum = np.power(rowsum + 1e-8, -0.5).flatten()
     rowsum[np.isinf(rowsum)] = 0.
@@ -25,6 +35,14 @@ def csr_norm(csr_mat, mean_flag=False):  # TODO: check if this function exists i
 
 
 def matrix_to_tensor(cur_matrix):
+    """
+    Convert the input matrix to a tensor format
+
+    :param cur_matrix:  input matrix
+    :type cur_matrix: np.ndarray
+    :return:  tensor
+    :rtype: torch.Tensor
+    """
     if type(cur_matrix) != sp.coo_matrix:
         cur_matrix = cur_matrix.tocoo()  #
     indices = torch.from_numpy(np.vstack((cur_matrix.row, cur_matrix.col)).astype(np.int64))  #
