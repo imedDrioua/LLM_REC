@@ -48,11 +48,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="train.html">Train class module</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Test class module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#test.Tester"><code class="docutils literal notranslate"><span class="pre">Tester</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#test.Tester.test"><code class="docutils literal notranslate"><span class="pre">Tester.test()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#test.Tester.test_one_user"><code class="docutils literal notranslate"><span class="pre">Tester.test_one_user()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#test.test"><code class="docutils literal notranslate"><span class="pre">test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test.test_one_user"><code class="docutils literal notranslate"><span class="pre">test_one_user()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics module</a></li>
@@ -87,27 +84,22 @@
              
   <section id="module-test">
 <span id="test-class-module"></span><h1>Test class module<a class="headerlink" href="#module-test" title="Link to this heading"></a></h1>
-<p>Script that defines the Tester class which is used to test the model performance on the test set</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="test.Tester">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">test.</span></span><span class="sig-name descname"><span class="pre">Tester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'[10,</span> <span class="pre">20,</span> <span class="pre">50]'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.Tester" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="test.Tester.test">
-<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ua_embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ia_embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_test_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.Tester.test" title="Link to this definition"></a></dt>
-<dd><p>Test the performance of the model</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="test.test">
+<span class="sig-prename descclassname"><span class="pre">test.</span></span><span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ua_embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ia_embeddings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_to_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_test_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.test" title="Link to this definition"></a></dt>
+<dd><p>Test the performance of the model for all users</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ua_embeddings</strong> (<em>torch.Tensor</em>) – user embeddings</p></li>
 <li><p><strong>ia_embeddings</strong> (<em>torch.Tensor</em>) – item embeddings</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – batch size</p></li>
-<li><p><strong>is_val</strong> (<em>bool</em>) – bool, validation flag</p></li>
-<li><p><strong>batch_test_flag</strong> (<em>bool</em>) – bool, batch test flag</p></li>
+<li><p><strong>users_to_test</strong> (<em>list</em>) – list of users to test</p></li>
+<li><p><strong>batch_test_flag</strong> (<em>bool</em>) – flag to indicate if batch testing is enabled</p></li>
+<li><p><strong>is_val</strong> (<em>bool</em>) – flag to indicate if the test is for validation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>result of the model performance</p>
+<dd class="field-even"><p>valeurs des métrics de performance</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
@@ -115,16 +107,13 @@
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="test.Tester.test_one_user">
-<span class="sig-name descname"><span class="pre">test_one_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'part'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.Tester.test_one_user" title="Link to this definition"></a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="test.test_one_user">
+<span class="sig-prename descclassname"><span class="pre">test.</span></span><span class="sig-name descname"><span class="pre">test_one_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#test.test_one_user" title="Link to this definition"></a></dt>
 <dd><p>Test the performance of the model for one user</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – list, user u’s ratings for user u</p></li>
-<li><p><strong>test_flag</strong> – str, test flag</p></li>
-</ul>
+<dd class="field-odd"><p><strong>x</strong> – list, user u’s ratings for user u</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>performance: dict</p>
@@ -133,8 +122,6 @@
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
-</dd></dl>
-
 </dd></dl>
 
 </section>

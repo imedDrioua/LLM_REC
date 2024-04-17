@@ -1,114 +1,105 @@
-"""
-Script that defines the Tester class which is used to test the model performance on the test set
-"""
+import torch
 import multiprocessing
+import heapq
 import torch
 import numpy as np
-from tqdm import tqdm
 from src.metrics import get_performance, rank_list_by_heapq, rank_list_by_sorted
+from src.data_loader.data_loader import BooksDataset
+
+cores = multiprocessing.cpu_count() // 5
+
+Ks = eval("[10, 20, 50]")
+
+ITEM_NUM = 17366
+BATCH_SIZE = 1024
+
+dataset = BooksDataset(data_dir="./data/netflix")
 
 
-class Tester:
-    def __init__(self, dataset, ks="[10, 20, 50]"):
-        self.dataset = dataset
-        self.USR_NUM, self.ITEM_NUM = dataset.n_users, dataset.n_items
-        self.BATCH_SIZE = dataset.batch_size
-        self.Ks = eval(ks)
-        self.test_users_keys = [int(x) for x in list(self.dataset.get_dataset("test_dict").keys())]
-        self.cores = multiprocessing.cpu_count() // 5
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.test_items = None
+def test_one_user(x):
+    # user u's ratings for user u
+    is_val = x[-1]
+    rating = x[0]
+    # uid
+    u = x[1]
+    # user u's items in the training set
+    try:
+        training_items = dataset.get_dataset("train_dict")[str(u)]
+    except KeyError:
+        training_items = []
+    # user u's items in the test set
+    if is_val:
+        user_pos_test = dataset.get_dataset("val_dict")[str(u)]
+    else:
+        user_pos_test = dataset.get_dataset("test_dict")[str(u)]
 
-    def test_one_user(self, x, test_flag='part'):
-        """
-        Test the performance of the model for one user
+    all_items = set(range(ITEM_NUM))
 
-        :param x:  list, user u's ratings for user u
-        :param test_flag:  str, test flag
-        :return:  performance: dict
-        :rtype: dict
-        """
-        # user u's ratings for user u
-        is_val = x[-1]
-        rating = x[0]
+    test_items = list(all_items - set(training_items))
 
-        # uid
-        u = x[1]
-        # user u's items in the training set
-        try:
-            training_items = self.dataset.get_dataset("train_dict")[str(u)]
-        except KeyError:
-            training_items = []
-        # user u's items in the test set
-        if is_val:
-            user_pos_test = self.dataset.get_dataset("val_dict")[str(u)]
+    if "part" == 'part':
+        r, auc = rank_list_by_heapq(list(user_pos_test), test_items, rating, Ks)
+    else:
+        r, auc = rank_list_by_sorted(list(user_pos_test), test_items, rating, Ks)
+
+    return get_performance(r, auc, list(user_pos_test), Ks)
+
+
+def test_torch(ua_embeddings, ia_embeddings, users_to_test, is_val=False, drop_flag=False, batch_test_flag=False):
+    result = {'precision': np.zeros(len(Ks)), 'recall': np.zeros(len(Ks)), 'ndcg': np.zeros(len(Ks)),
+              'hit_ratio': np.zeros(len(Ks)), 'auc': 0.}
+    pool = multiprocessing.Pool(cores)
+
+    u_batch_size = BATCH_SIZE * 2
+    i_batch_size = BATCH_SIZE
+
+    test_users = users_to_test
+    n_test_users = len(test_users)
+    n_user_batchs = n_test_users // u_batch_size + 1
+    count = 0
+
+    for u_batch_id in range(n_user_batchs):
+        start = u_batch_id * u_batch_size
+        end = (u_batch_id + 1) * u_batch_size
+        user_batch = test_users[start: end]
+        if batch_test_flag:
+            n_item_batchs = ITEM_NUM // i_batch_size + 1
+            rate_batch = np.zeros(shape=(len(user_batch), ITEM_NUM))
+
+            i_count = 0
+            for i_batch_id in range(n_item_batchs):
+                i_start = i_batch_id * i_batch_size
+                i_end = min((i_batch_id + 1) * i_batch_size, ITEM_NUM)
+
+                item_batch = range(i_start, i_end)
+                u_g_embeddings = ua_embeddings[user_batch]
+                i_g_embeddings = ia_embeddings[item_batch]
+                i_rate_batch = torch.matmul(u_g_embeddings, torch.transpose(i_g_embeddings, 0, 1))
+
+                rate_batch[:, i_start: i_end] = i_rate_batch
+                i_count += i_rate_batch.shape[1]
+
+            assert i_count == ITEM_NUM
+
         else:
-            user_pos_test = self.dataset.get_dataset("test_dict")[str(u)]
-
-        all_items = set(range(self.ITEM_NUM))
-
-        test_items = list(all_items - set(training_items))
-
-        if test_flag == 'part':
-            r, auc = rank_list_by_heapq(rating, user_pos_test, test_items, self.Ks)
-        else:
-            r, auc = rank_list_by_sorted(rating, user_pos_test, test_items, self.Ks)
-
-        return get_performance(r, auc, user_pos_test, self.Ks)
-
-    def test(self, ua_embeddings, ia_embeddings, batch_size, is_val, batch_test_flag=False):
-        """
-        Test the performance of the model
-
-        :param ua_embeddings:  user embeddings
-        :type ua_embeddings: torch.Tensor
-        :param ia_embeddings:  item embeddings
-        :type ia_embeddings: torch.Tensor
-        :param batch_size:  batch size
-        :type batch_size: int
-        :param is_val:  bool, validation flag
-        :type is_val: bool
-        :param batch_test_flag:  bool, batch test flag
-        :type batch_test_flag: bool
-        :return:  result of the model performance
-        :rtype: dict
-        """
-        result = {'precision': np.zeros(len(self.Ks)), 'recall': np.zeros(len(self.Ks)), 'ndcg': np.zeros(len(self.Ks)),
-                  'hit_ratio': np.zeros(len(self.Ks)), 'auc': 0.}
-
-        pool = multiprocessing.Pool(self.cores)
-
-        u_batch_size = batch_size * 2
-
-        n_test_users = len(self.test_users_keys)
-        n_user_batchs = n_test_users // u_batch_size + 1
-        count = 0
-        for u_batch_id in tqdm(range(n_user_batchs)):
-            start = u_batch_id * u_batch_size
-            end = (u_batch_id + 1) * u_batch_size
-            user_batch = self.test_users_keys[start: end]
-            item_batch = range(self.ITEM_NUM)
+            item_batch = range(ITEM_NUM)
             u_g_embeddings = ua_embeddings[user_batch]
             i_g_embeddings = ia_embeddings[item_batch]
             rate_batch = torch.matmul(u_g_embeddings, torch.transpose(i_g_embeddings, 0, 1))
 
-            rate_batch = rate_batch.detach().cpu().numpy()
-            user_batch_rating_uid = zip(rate_batch, user_batch, [is_val] * len(user_batch))
+        rate_batch = rate_batch.detach().cpu().numpy()
+        user_batch_rating_uid = zip(rate_batch, user_batch, [is_val] * len(user_batch))
 
-            batch_result = pool.map(self.test_one_user, user_batch_rating_uid)
-            count += len(batch_result)
+        batch_result = pool.map(test_one_user, user_batch_rating_uid)
+        count += len(batch_result)
 
-            for re in batch_result:
-                result['precision'] += re['precision'] / n_test_users
-                result['recall'] += re['recall'] / n_test_users
-                result['ndcg'] += re['ndcg'] / n_test_users
-                result['hit_ratio'] += re['hit_ratio'] / n_test_users
-                result['auc'] += re['auc'] / n_test_users
+        for re in batch_result:
+            result['precision'] += re['precision'] / n_test_users
+            result['recall'] += re['recall'] / n_test_users
+            result['ndcg'] += re['ndcg'] / n_test_users
+            result['hit_ratio'] += re['hit_ratio'] / n_test_users
+            result['auc'] += re['auc'] / n_test_users
 
-        result_str = ""
-        for key in result.keys():
-            result_str += "\n" + key + ": " + str(result[key])
-        result_str += "\n"
-        assert count == n_test_users
-        pool.close()
-        return result, result_str
+    assert count == n_test_users
+    pool.close()
+    return result

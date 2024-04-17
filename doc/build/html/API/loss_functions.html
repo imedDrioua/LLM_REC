@@ -53,6 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="mm_model.html">Multi model GCN module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="decoder.html">Decoder class module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Loss functions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#loss_functions.bpr_loss"><code class="docutils literal notranslate"><span class="pre">bpr_loss()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#loss_functions.bpr_loss_aug"><code class="docutils literal notranslate"><span class="pre">bpr_loss_aug()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#loss_functions.prune_loss"><code class="docutils literal notranslate"><span class="pre">prune_loss()</span></code></a></li>
 </ul>
@@ -92,9 +93,34 @@
 <span id="loss-functions-module"></span><h1>Loss functions module<a class="headerlink" href="#module-loss_functions" title="Link to this heading"></a></h1>
 <p>Script that defines the loss functions for the model</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="loss_functions.bpr_loss">
+<span class="sig-prename descclassname"><span class="pre">loss_functions.</span></span><span class="sig-name descname"><span class="pre">bpr_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">users</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_emb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userEmb0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posEmb0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negEmb0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#loss_functions.bpr_loss" title="Link to this definition"></a></dt>
+<dd><p>Bayesian Personalized Ranking (BPR) loss function for user item embeddings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>users</strong> (<em>list</em>) – user liste</p></li>
+<li><p><strong>users_emb</strong> (<em>torch.Tensor</em>) – user embeddings</p></li>
+<li><p><strong>pos_emb</strong> (<em>torch.Tensor</em>) – positive item embeddings</p></li>
+<li><p><strong>neg_emb</strong> (<em>torch.Tensor</em>) – negative item embeddings</p></li>
+<li><p><strong>userEmb0</strong> (<em>torch.Tensor</em>) – user initial embeddings weights</p></li>
+<li><p><strong>posEmb0</strong> (<em>torch.Tensor</em>) – positive item initial embeddings weights</p></li>
+<li><p><strong>negEmb0</strong> (<em>torch.Tensor</em>) – negative item initial embeddings weights</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>matrix factorization loss, embedding loss, regularization loss</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, float, float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="loss_functions.bpr_loss_aug">
 <span class="sig-prename descclassname"><span class="pre">loss_functions.</span></span><span class="sig-name descname"><span class="pre">bpr_loss_aug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">users</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune_loss_drop_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.71</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#loss_functions.bpr_loss_aug" title="Link to this definition"></a></dt>
-<dd><p>Bayesian Personalized Ranking (BPR) loss function</p>
+<dd><p>Bayesian Personalized Ranking (BPR) loss function for augmented data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -118,7 +144,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="loss_functions.prune_loss">
 <span class="sig-prename descclassname"><span class="pre">loss_functions.</span></span><span class="sig-name descname"><span class="pre">prune_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_rate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#loss_functions.prune_loss" title="Link to this definition"></a></dt>
-<dd><p>Prune the loss</p>
+<dd><p>Prune the loss with the given drop rate</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
