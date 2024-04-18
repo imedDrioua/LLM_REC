@@ -1,6 +1,13 @@
-- Incorporation
-- Interactions (séparer les deux) et les normaliser 
-- clip grad (changer le max norm)
-- test (réduire le nombre de test), et verifier pourquoi le test est si long si aucune solution n'est trouvée supprimer la classe test
-- vérifier l'ordre dans la boucle pytorch
-- si les résultats sont mauvais, fait les memes embeddings et met le meme loss 
+- Implémentation from scratch du modèle. 
+- Projet structuré en package.
+- Code avec la norme PEP8.
+- Logs plus informatifs.
+- Implémentation du modèle suivant les normes recommandées par pytorch.
+- Centralisation de la source de données dans une seule classe (Data Loader).
+- Elaboration d'une documentation complète du projet.
+-----------------------------------------
+- Implementation du LightGCN tel que décrit dans le papier (avec la matrice d'adjacence normalisée).
+- Implémentation de la fonction de perte BPR pour les embeddings de lightGCN tel que définie dans le papier.
+- Stabilisation de l'entrainement avec le Dropout et le batch normalisation.
+- Aggregation des embeddings des attributs augmentés (élimination de plusieurs boucles). 
+- Sauvegarde du modèle 
