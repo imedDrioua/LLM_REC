@@ -1,0 +1,42 @@
+2024-04-17 23:40:  PID: 11892
+2024-04-17 23:40:  
+Dataset             Shape                
+----------------------------------------
+images              (33962, 1024)
+text                (33962, 1024)
+user_profiles       (14790, 768)
+books_attributes    (33962, 768)
+train_dict          14790
+test_dict           2000
+val_dict            14790
+adjacency_matrix    48752
+interactions        14790
+interactions_T      33962
+
+Number of interactions: 449114
+Sparsity: 99.91%
+
+2024-04-17 23:42:  
+Epoch 1/10, Loss=441.7375, Time=109.31
+2024-04-17 23:42:  precision@10 = 0.0045 - precision@20 = 0.0037 - precision@50 = 0.0028 - || recall@10 = 0.0144 - recall@20 = 0.0200 - recall@50 = 0.0310 - || ndcg@10 = 0.0181 - ndcg@20 = 0.0237 - ndcg@50 = 0.0340 - || hit_ratio@10 = 0.0440 - hit_ratio@20 = 0.0665 - hit_ratio@50 = 0.1065 - || auc=0.0000|| 
+2024-04-17 23:44:  
+Epoch 2/10, Loss=251.9853, Time=110.40
+2024-04-17 23:44:  precision@10 = 0.0052 - precision@20 = 0.0044 - precision@50 = 0.0031 - || recall@10 = 0.0162 - recall@20 = 0.0240 - recall@50 = 0.0362 - || ndcg@10 = 0.0212 - ndcg@20 = 0.0282 - ndcg@50 = 0.0382 - || hit_ratio@10 = 0.0485 - hit_ratio@20 = 0.0775 - hit_ratio@50 = 0.1160 - || auc=0.0000|| 
+2024-04-17 23:46:  
+Epoch 3/10, Loss=208.5271, Time=113.49
+2024-04-17 23:46:  precision@10 = 0.0059 - precision@20 = 0.0045 - precision@50 = 0.0033 - || recall@10 = 0.0168 - recall@20 = 0.0254 - recall@50 = 0.0394 - || ndcg@10 = 0.0223 - ndcg@20 = 0.0283 - ndcg@50 = 0.0391 - || hit_ratio@10 = 0.0550 - hit_ratio@20 = 0.0770 - hit_ratio@50 = 0.1195 - || auc=0.0000|| 
+2024-04-17 23:48:  
+Epoch 4/10, Loss=183.4496, Time=118.89
+2024-04-17 23:48:  precision@10 = 0.0063 - precision@20 = 0.0050 - precision@50 = 0.0036 - || recall@10 = 0.0172 - recall@20 = 0.0277 - recall@50 = 0.0404 - || ndcg@10 = 0.0250 - ndcg@20 = 0.0319 - ndcg@50 = 0.0439 - || hit_ratio@10 = 0.0580 - hit_ratio@20 = 0.0835 - hit_ratio@50 = 0.1315 - || auc=0.0000|| 
+2024-04-17 23:50:  
+Epoch 5/10, Loss=163.5000, Time=112.85
+2024-04-17 23:50:  precision@10 = 0.0062 - precision@20 = 0.0050 - precision@50 = 0.0037 - || recall@10 = 0.0175 - recall@20 = 0.0280 - recall@50 = 0.0413 - || ndcg@10 = 0.0253 - ndcg@20 = 0.0330 - ndcg@50 = 0.0452 - || hit_ratio@10 = 0.0565 - hit_ratio@20 = 0.0845 - hit_ratio@50 = 0.1335 - || auc=0.0000|| 
+2024-04-17 23:52:  
+Epoch 6/10, Loss=149.5183, Time=113.75
+2024-04-17 23:52:  precision@10 = 0.0069 - precision@20 = 0.0051 - precision@50 = 0.0039 - || recall@10 = 0.0195 - recall@20 = 0.0291 - recall@50 = 0.0426 - || ndcg@10 = 0.0267 - ndcg@20 = 0.0334 - ndcg@50 = 0.0460 - || hit_ratio@10 = 0.0610 - hit_ratio@20 = 0.0880 - hit_ratio@50 = 0.1360 - || auc=0.0000|| 
+2024-04-17 23:54:  
+Epoch 7/10, Loss=138.0572, Time=113.87
+2024-04-17 23:54:  precision@10 = 0.0078 - precision@20 = 0.0059 - precision@50 = 0.0042 - || recall@10 = 0.0205 - recall@20 = 0.0294 - recall@50 = 0.0456 - || ndcg@10 = 0.0301 - ndcg@20 = 0.0378 - ndcg@50 = 0.0507 - || hit_ratio@10 = 0.0670 - hit_ratio@20 = 0.0945 - hit_ratio@50 = 0.1445 - || auc=0.0000|| 
+2024-04-17 23:56:  
+Epoch 8/10, Loss=128.5436, Time=114.24
+2024-04-17 23:56:  precision@10 = 0.0072 - precision@20 = 0.0058 - precision@50 = 0.0043 - || recall@10 = 0.0194 - recall@20 = 0.0292 - recall@50 = 0.0458 - || ndcg@10 = 0.0285 - ndcg@20 = 0.0364 - ndcg@50 = 0.0510 - || hit_ratio@10 = 0.0630 - hit_ratio@20 = 0.0920 - hit_ratio@50 = 0.1505 - || auc=0.0000|| 

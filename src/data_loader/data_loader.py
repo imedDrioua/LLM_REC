@@ -26,6 +26,12 @@ class BooksDataset:
             self.train_dict = json.load(f)
         with open(f'{data_dir}/test.json', 'r') as f:
             self.test_dict = json.load(f)
+        # delete user with empty test set
+        test_set = {}
+        for user in self.test_dict.keys():
+            if len(self.test_dict[user]) > 0:
+                test_set[user] = self.test_dict[user]
+        self.test_dict = test_set
         with open(f'{data_dir}/validation.json', 'r') as f:
             self.val_dict = json.load(f)
 

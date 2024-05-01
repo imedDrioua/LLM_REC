@@ -1,0 +1,18 @@
+2024-04-17 23:30:  PID: 3632
+2024-04-17 23:30:  
+Dataset             Shape                
+----------------------------------------
+images              (33962, 1024)
+text                (33962, 1024)
+user_profiles       (14790, 768)
+books_attributes    (33962, 768)
+train_dict          14790
+test_dict           2000
+val_dict            14790
+adjacency_matrix    48752
+interactions        14790
+interactions_T      33962
+
+Number of interactions: 449114
+Sparsity: 99.91%
+
