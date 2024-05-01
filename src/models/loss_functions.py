@@ -1,5 +1,5 @@
 """
-Script that defines the loss functions for the model
+Script that defines the loss functions for the model.
 """
 import torch
 import numpy as np

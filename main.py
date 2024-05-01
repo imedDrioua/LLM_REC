@@ -33,7 +33,7 @@ if __name__ == "__main__":
                     interactions=dataset.get_dataset("interactions"),
                     interactions_t=dataset.get_dataset("interactions_T"),
                     image_embeddings_data=dataset.get_dataset("images"),
-                    text_embeddings_data=dataset.get_dataset("text"), embed_size=128, n_layers=3,
+                    text_embeddings_data=dataset.get_dataset("text"), embed_size=64, n_layers=3,
                     user_profiles_data=dataset.get_dataset("user_profiles"),
                     book_attributes_data=dataset.get_dataset("books_attributes"))
     model.to(device)

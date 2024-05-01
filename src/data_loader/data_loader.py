@@ -102,7 +102,7 @@ class BooksDataset:
 
     # return the length of all the datasets as dictionary
     def __len__(self):
-        return {k: len(v) for k, v in self.datasets.items()}
+        return {k: len(v) for k, v in self.datasets.items()} # return the length of all the datasets as dictionary
 
     # return the dataset by name
     def get_dataset(self, dataset):
