@@ -1,6 +1,4 @@
 # The logger class
-
-
 import os
 from datetime import datetime
 
