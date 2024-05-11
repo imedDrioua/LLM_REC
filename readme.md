@@ -2,9 +2,9 @@
 
 LLMrec is a recommendation system that uses large language models to augment the training data in order to face data sparsity and cold start problems.
 ![Alt text](static/logo.png?raw=true)
-## Table des Matières
+## Table of contents
 
-- [Aperçu](#aperçu)
+- [Overview](#overview)
 - [Authors](#authors)
 - [Get the package](#get-the-package)
 - [Content](#content)
@@ -14,7 +14,7 @@ LLMrec is a recommendation system that uses large language models to augment the
 - [Api documentation](#api-documentation)
 - [Citing](#citing)
 
-## Aperçu
+## Overview
 
 The repo is a reimplementation of the official LLMRec project. This enhanced version incorporates various code and implementation improvements, along with an extended test suite to ensure robustness and reliability.
 
