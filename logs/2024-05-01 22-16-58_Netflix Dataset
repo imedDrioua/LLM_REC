@@ -1,0 +1,21 @@
+2024-05-01 22:16:  PID: 2896
+2024-05-01 22:16:  
+Dataset             Shape                
+----------------------------------------
+images              (33962, 1024)
+text                (33962, 1024)
+user_profiles       (14790, 768)
+books_attributes    (33962, 768)
+train_dict          14790
+test_dict           2000
+val_dict            14790
+adjacency_matrix    48752
+interactions        14790
+interactions_T      33962
+
+Number of interactions: 449114
+Sparsity: 99.91%
+
+2024-05-01 22:18:  
+Epoch 1/10, Loss=275.8803, Time=77.99
+2024-05-01 22:18:  precision@10 = 0.0059 - precision@20 = 0.0045 - precision@50 = 0.0035 - || recall@10 = 0.0176 - recall@20 = 0.0227 - recall@50 = 0.0388 - || ndcg@10 = 0.0255 - ndcg@20 = 0.0313 - ndcg@50 = 0.0445 - || hit_ratio@10 = 0.0565 - hit_ratio@20 = 0.0790 - hit_ratio@50 = 0.1325 - || auc=0.0000|| 
