@@ -1,6 +1,6 @@
 # LLMrec : Large Language Model Recommendation
 
-LLMrec is a recommendation system that uses large language models to augment the training data of a collaborative filtering model. This documentation documents the API of the LLMrec package.See also
+LLMrec is a recommendation system that uses large language models to augment the training data in order to face data sparsity and cold start problems.
 ![Alt text](static/logo.png?raw=true)
 ## Table des Matières
 
