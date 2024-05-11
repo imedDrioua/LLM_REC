@@ -1,0 +1,33 @@
+2024-05-11 16:33:  PID: 6760
+2024-05-11 16:33:  
+Dataset             Shape                
+----------------------------------------
+images              (17366, 512)
+text                (17366, 768)
+user_profiles       (13187, 1536)
+books_attributes    (17366, 1536)
+train_dict          13187
+test_dict           1845
+val_dict            5000
+adjacency_matrix    30553
+interactions        13187
+interactions_T      17366
+
+Number of interactions: 68933
+Sparsity: 99.97%
+
+2024-05-11 16:34:  
+Epoch 1/10, Loss=55.2020, Time=17.92
+2024-05-11 16:34:  precision@10 = 0.0049 - precision@20 = 0.0036 - precision@50 = 0.0024 - || recall@10 = 0.0488 - recall@20 = 0.0721 - recall@50 = 0.1192 - || ndcg@10 = 0.0236 - ndcg@20 = 0.0294 - ndcg@50 = 0.0389 - || hit_ratio@10 = 0.0488 - hit_ratio@20 = 0.0721 - hit_ratio@50 = 0.1192 - || auc=0.0000|| 
+2024-05-11 16:34:  
+Epoch 2/10, Loss=28.5589, Time=17.76
+2024-05-11 16:34:  precision@10 = 0.0050 - precision@20 = 0.0035 - precision@50 = 0.0022 - || recall@10 = 0.0504 - recall@20 = 0.0699 - recall@50 = 0.1100 - || ndcg@10 = 0.0259 - ndcg@20 = 0.0308 - ndcg@50 = 0.0388 - || hit_ratio@10 = 0.0504 - hit_ratio@20 = 0.0699 - hit_ratio@50 = 0.1100 - || auc=0.0000|| 
+2024-05-11 16:34:  
+Epoch 3/10, Loss=23.4057, Time=17.78
+2024-05-11 16:34:  precision@10 = 0.0050 - precision@20 = 0.0034 - precision@50 = 0.0021 - || recall@10 = 0.0499 - recall@20 = 0.0672 - recall@50 = 0.1046 - || ndcg@10 = 0.0278 - ndcg@20 = 0.0321 - ndcg@50 = 0.0396 - || hit_ratio@10 = 0.0499 - hit_ratio@20 = 0.0672 - hit_ratio@50 = 0.1046 - || auc=0.0000|| 
+2024-05-11 16:35:  
+Epoch 4/10, Loss=19.5378, Time=17.91
+2024-05-11 16:35:  precision@10 = 0.0050 - precision@20 = 0.0038 - precision@50 = 0.0023 - || recall@10 = 0.0504 - recall@20 = 0.0759 - recall@50 = 0.1160 - || ndcg@10 = 0.0289 - ndcg@20 = 0.0354 - ndcg@50 = 0.0435 - || hit_ratio@10 = 0.0504 - hit_ratio@20 = 0.0759 - hit_ratio@50 = 0.1160 - || auc=0.0000|| 
+2024-05-11 16:35:  
+Epoch 5/10, Loss=17.7751, Time=17.97
+2024-05-11 16:35:  precision@10 = 0.0055 - precision@20 = 0.0039 - precision@50 = 0.0024 - || recall@10 = 0.0547 - recall@20 = 0.0780 - recall@50 = 0.1214 - || ndcg@10 = 0.0308 - ndcg@20 = 0.0368 - ndcg@50 = 0.0454 - || hit_ratio@10 = 0.0547 - hit_ratio@20 = 0.0780 - hit_ratio@50 = 0.1214 - || auc=0.0000|| 
