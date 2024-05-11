@@ -51,7 +51,7 @@ class BooksDataset:
         self.images = np.load(f'{data_dir}/embed_image.npy')
         self.text = np.load(f'{data_dir}/embed_text.npy')
         self.user_profiles = np.load(f'{data_dir}/users_profiles_embeddings.npy')
-        self.books_attributes = np.load(f'{data_dir}/books_attributes_embeddings.npy')
+        self.books_attributes = np.load(f'{data_dir}/attributes_embeddings.npy')
         self.interactions = pd.read_pickle(f'{data_dir}/train_matrix.pkl')
         self.interactions_T = self.interactions.T
         self.interactions = csr_norm(self.interactions, mean_flag=True)

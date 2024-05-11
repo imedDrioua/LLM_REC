@@ -6,6 +6,7 @@ import numpy as np
 import json
 from src.metrics import get_performance, rank_list_by_heapq, rank_list_by_sorted
 from src.data_loader.data_loader import BooksDataset
+
 print(os.getcwd())
 cores = multiprocessing.cpu_count() // 5
 data_dir = "./data/books"
@@ -29,7 +30,8 @@ n_items = 14790
 n_users = 33962
 batch_size = 1024
 
-def test(ua_embeddings, ia_embeddings, users_to_test,batch_test_flag=False, is_val=False):
+
+def test(ua_embeddings, ia_embeddings, users_to_test, batch_test_flag=False, is_val=False):
     """
     Test the performance of the model for all users
 
