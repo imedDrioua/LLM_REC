@@ -13,8 +13,10 @@ data_dir = "./data/books"
 Ks = eval("[10, 20, 50]")
 with open(f'{data_dir}/train.json', 'r') as f:
     train_dict = json.load(f)
+
 with open(f'{data_dir}/test.json', 'r') as f:
     test_dict = json.load(f)
+
 test_set = {}
 for uid, test_items in test_dict.items():
     if len(test_items) == 0:
