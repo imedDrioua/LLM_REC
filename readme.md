@@ -71,6 +71,7 @@ We have enriched the Amazon Books dataset with augmented data using:
 - **Cohere LLM for Data Augmentation**: Leveraging Cohere LLM for augmenting the Amazon Books dataset with additional context and diversity.
 - **LangChain for Prompting**: Utilizing LangChain for generating prompts to enrich the dataset with diverse textual inputs.
 - **SentenceBert and ViT for Embedding Generation**: Employing SentenceBert and ViT for generating embeddings to capture semantic relationships and improve recommendation quality.
+The augmented dataset can be downloaded from the following link: [Amazon Books Augmented Dataset](https://drive.google.com/file/d/1J9Q6)
 ## API Documentation
 The docs folder contains the API documentation for the LLMrec package. The documentation provides detailed information about the package's classes, methods, and attributes, along with examples to illustrate their usage.
 
