@@ -9,7 +9,7 @@ LLMrec is a recommendation system that uses large language models to augment the
 
 
 ..  seealso::
-    we provide a prepared augmented dataset for BooksCrossing. You can download it from `here <https://drive.google.com/file/d/1J9Q6Q6Q6J9Q6Q6Q6J9Q6Q6Q6J9Q6Q6Q6/view?usp=sharing>`_.
+    we provide a prepared augmented dataset for Amazon Books. You can download it from `here <https://drive.google.com/file/d/1J9Q6Q6Q6J9Q6Q6Q6J9Q6Q6Q6J9Q6Q6Q6/view?usp=sharing>`_.
 
 
 .. toctree::
